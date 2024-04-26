@@ -16,7 +16,12 @@ namespace FirmTracker_Server.Controllers
         }
 
         // POST: api/Products
+        /// <summary>
+        /// Creates a new product.
+        /// </summary>
         [HttpPost]
+        [ProducesResponseType(200)] // Created
+        [ProducesResponseType(400)] // Bad Request
         public IActionResult CreateProduct([FromBody] Product product)
         {
             try
@@ -32,6 +37,8 @@ namespace FirmTracker_Server.Controllers
 
         // GET: api/Products/5
         [HttpGet("{id}")]
+        [ProducesResponseType(200)] // Created
+        [ProducesResponseType(400)] // Bad Request
         public IActionResult GetProduct(int id)
         {
             var product = _productCrud.GetProduct(id);
@@ -42,6 +49,8 @@ namespace FirmTracker_Server.Controllers
 
         // PUT: api/Products/5
         [HttpPut("{id}")]
+        [ProducesResponseType(200)] // Created
+        [ProducesResponseType(400)] // Bad Request
         public IActionResult UpdateProduct(int id, [FromBody] Product product)
         {
             if (id != product.Id)
@@ -60,6 +69,8 @@ namespace FirmTracker_Server.Controllers
 
         // DELETE: api/Products/5
         [HttpDelete("{id}")]
+        [ProducesResponseType(200)] // Created
+        [ProducesResponseType(400)] // Bad Request
         public IActionResult DeleteProduct(int id)
         {
             try
@@ -75,6 +86,8 @@ namespace FirmTracker_Server.Controllers
 
         // GET: api/Products
         [HttpGet]
+        [ProducesResponseType(200)] // Created
+        [ProducesResponseType(400)] // Bad Request
         public IActionResult GetAllProducts()
         {
             var products = _productCrud.GetAllProducts();
