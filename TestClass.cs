@@ -1,4 +1,5 @@
-﻿using FirmTracker_Server.nHibernate; 
+﻿using FirmTracker_Server.Controllers;
+using FirmTracker_Server.nHibernate; 
 using FirmTracker_Server.nHibernate.Products;
 using NHibernate;
 
@@ -26,12 +27,23 @@ namespace FirmTracker_Server
                 Type = 0,
                 Availability = 0
             };
+            var transaction1 = new nHibernate.Transactions.Transaction
+            {
+                Date = DateTime.Now,
+                Description = "testowa transakcja",
+                Discount = 10,
+                EmployeeId = 1,
+                PaymentType = "Karta kredytowa",
+                Products = new List<Product> { product, product2 }
+            };
 
             try
             {
                 FirmTracker_Server.nHibernate.Products.ProductCRUD crud = new ProductCRUD();
+                FirmTracker_Server.nHibernate.Transactions.TransactionCRUD transactionCrud = new nHibernate.Transactions.TransactionCRUD();
                 crud.AddProduct(product);
                 crud.AddProduct(product2);
+                transactionCrud.AddTransaction(transaction1);
             }
             catch(Exception ex)
             {

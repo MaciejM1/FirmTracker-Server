@@ -14,17 +14,14 @@ namespace FirmTracker_Server
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            string appDirectory = Directory.GetCurrentDirectory();
-            // Combine the application directory with the relative path to the config file
+            string appDirectory = Directory.GetCurrentDirectory();        
             string configFilePath = Path.Combine(appDirectory, "appsettings.json");
             string connectionString = "";
-            // Check if the config file exists
             if (File.Exists(configFilePath))
             {
                 var config = new ConfigurationBuilder()
                   .AddJsonFile(configFilePath)
                   .Build();
-
 
                 var connectionstringsection = config.GetSection("AppSettings:ConnectionString");
 
@@ -72,7 +69,6 @@ namespace FirmTracker_Server
                 Console.WriteLine("Nie uda³o siê uruchomiæ swaggera");
             }
 
-            Console.WriteLine("raz dwa trzy");
 
             app.UseAuthorization();
 
