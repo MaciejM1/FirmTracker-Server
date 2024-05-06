@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using FirmTracker_Server.nHibernate.Transactions;
-using FirmTracker_Server;
-using System.Collections.Generic;
-
+using System;
+using System.Text.Json.Serialization;
+using System.Text.Json;
+using System.Transactions;
 
 namespace FirmTracker_Server.Controllers
 {
@@ -24,7 +25,7 @@ namespace FirmTracker_Server.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult CreateTransaction([FromBody] Transaction transaction)
+        public IActionResult CreateTransaction([FromBody] nHibernate.Transactions.Transaction transaction)
         {
             try
             {
@@ -53,7 +54,7 @@ namespace FirmTracker_Server.Controllers
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult UpdateTransaction(int id, [FromBody] Transaction transaction)
+        public IActionResult UpdateTransaction(int id, [FromBody] nHibernate.Transactions.Transaction transaction)
         {
             if (id != transaction.Id)
                 return BadRequest("Transaction ID mismatch");
@@ -90,9 +91,22 @@ namespace FirmTracker_Server.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetAllTransactions()
         {
             var transactions = _transactionCRUD.GetAllTransactions();
+            if (transactions == null)
+                return NotFound();
+
+            // Ustawienie opcji serializatora JSON
+            var options = new JsonSerializerOptions
+            {
+                ReferenceHandler = ReferenceHandler.Preserve // Obsługa cykli obiektów
+            };
+
+           // var json = JsonSerializer.Serialize(transactions, options);
+
+            // Zwrócenie odpowiedzi z JSON
             return Ok(transactions);
         }
 

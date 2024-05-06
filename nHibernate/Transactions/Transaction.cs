@@ -1,21 +1,24 @@
 ﻿using FirmTracker_Server.nHibernate.Products;
-using System.Text.Json.Serialization;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace FirmTracker_Server.nHibernate.Transactions
 {
     public class Transaction
     {
         public virtual int Id { get; set; }
-        public virtual DateTime Date { get; set; }  
+        public virtual DateTime Date { get; set; }
         public virtual int EmployeeId { get; set; }
-        public virtual IList<Product> Products { get; set; } = new List<Product>();
+        public virtual IList<TransactionProduct> TransactionProducts { get; set; } = new List<TransactionProduct>();
         public virtual string PaymentType { get; set; }
-        public virtual int Discount { get; set; }
+        public virtual decimal Discount { get; set; }
         public virtual string Description { get; set; }
+        public virtual decimal TotalPrice => TransactionProducts.Sum(tp => ((tp.Quantity * tp.UnitPrice)* ((1 - (Discount / 100)))));// (1 - (Discount / 100)));
 
         public Transaction()
         {
-            Products = new List<Product>();
+            TransactionProducts = new List<TransactionProduct>();
         }
     }
 }
