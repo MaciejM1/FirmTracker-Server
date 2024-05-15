@@ -2,13 +2,15 @@
 using Newtonsoft.Json;
 using NSwag.Annotations;
 
+
 namespace FirmTracker_Server.nHibernate.Transactions
 {
-    public class TransactionProduct
+    public class TransactionWithProducts
     {
         public virtual int Id { get; set; }
-        public virtual int TransactionId { get;  set; }
-        public virtual int  ProductID { get; set; }
+        public virtual int TransactionId { get; set; }
+        public virtual Products.Product Product { get; set; }
         public virtual int Quantity { get; set; }
+
     }
 }

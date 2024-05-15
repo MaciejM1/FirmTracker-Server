@@ -2,18 +2,18 @@
 
 namespace FirmTracker_Server.nHibernate.Transactions
 {
-    public class TransactionProductMapping : ClassMap<TransactionProduct>
+    public class TransactionWithProductsMapping : ClassMap<TransactionWithProducts>
     {
-        public TransactionProductMapping()
+        public TransactionWithProductsMapping()
         {
             Table("TransactionProducts");
             Id(x => x.Id).GeneratedBy.Identity();
 
             Map(x => x.TransactionId).Column("TransactionId").Not.Nullable();
-            Map(x => x.ProductID).Column("ProductId").Not.Nullable();
+            References(x => x.Product).Column("ProductId").Not.Nullable();
 
             Map(x => x.Quantity);
-            //Map(x => x.UnitPrice);
+
         }
     }
 }

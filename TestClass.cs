@@ -46,8 +46,8 @@ namespace FirmTracker_Server
                 transactionCrud.AddTransaction(transaction1);
 
                 List<TransactionProduct> testTransactionProducts = new List<TransactionProduct>  {
-         new TransactionProduct { Product = product, Quantity = 2, UnitPrice = product.Price },
-         new TransactionProduct { Product = product2, Quantity = 1, UnitPrice = product2.Price }
+         new TransactionProduct { ProductID = 1, Quantity = 2 },
+         new TransactionProduct { ProductID = 2, Quantity = 1 }
      };
                 foreach (var transactionProduct in testTransactionProducts)
                 {

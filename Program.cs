@@ -36,6 +36,13 @@ namespace FirmTracker_Server
 
             TestClass test = new TestClass();
             test.AddTestProduct();
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowSpecificOrigin",
+                    policy => policy.WithOrigins("http://localhost:3000")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod());
+            });
             builder.Services.AddControllers();
 
             builder.Services.AddEndpointsApiExplorer();
@@ -68,11 +75,14 @@ namespace FirmTracker_Server
             {
                 Console.WriteLine("Nie uda³o siê uruchomiæ swaggera");
             }
+            app.UseHttpsRedirection();
+
+            app.UseCors("AllowSpecificOrigin");
 
 
             app.UseAuthorization();
 
-
+      
             app.MapControllers();
 
             var configuration = new Configuration();
