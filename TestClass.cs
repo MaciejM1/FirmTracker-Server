@@ -2,6 +2,7 @@
 using FirmTracker_Server.nHibernate; 
 using FirmTracker_Server.nHibernate.Products;
 using FirmTracker_Server.nHibernate.Transactions;
+using FirmTracker_Server.nHibernate.Expenses;
 using NHibernate;
 
 namespace FirmTracker_Server
@@ -37,13 +38,23 @@ namespace FirmTracker_Server
                 PaymentType = "Karta kredytowa",
             };
 
+            var expense1 = new Expense
+            {
+                Date = DateTime.Now,
+                TotalPrice = 10.5m,
+                Description = "testowy rozchód"
+            };
+
             try
             {
                 FirmTracker_Server.nHibernate.Products.ProductCRUD crud = new ProductCRUD();
                 FirmTracker_Server.nHibernate.Transactions.TransactionCRUD transactionCrud = new nHibernate.Transactions.TransactionCRUD();
+                ExpenseCRUD expenseCrud = new ExpenseCRUD();
                 crud.AddProduct(product);
                 crud.AddProduct(product2);
                 transactionCrud.AddTransaction(transaction1);
+                expenseCrud.AddExpense(expense1);
+                
 
                 List<TransactionProduct> testTransactionProducts = new List<TransactionProduct>  {
          new TransactionProduct { ProductID = 1, Quantity = 2 },
