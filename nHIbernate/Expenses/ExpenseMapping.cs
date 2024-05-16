@@ -9,7 +9,7 @@ namespace FirmTracker_Server.nHibernate.Expenses
             Table("Expenses");
             Id(x => x.Id).GeneratedBy.Identity();
             Map(x => x.Date);
-            Map(x => x.TotalPrice);
+            Map(x => x.Value);
             Map(x => x.Description);
 
         }

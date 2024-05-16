@@ -40,5 +40,59 @@ namespace FirmTracker_Server.Controllers
             }
             return Ok(expense);
         }
+
+        //PUT: api/Expenses
+        [HttpPut("{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(200)]
+        public IActionResult UpdateExpense(int id, [FromBody] Expense expense)
+        {
+            if (id != expense.Id)
+            {
+                return BadRequest("Expense ID mismatch");
+            }
+            try
+            {
+                _expenseCrud.UpdateExpense(expense);
+                return NoContent();
+            }
+            catch (System.Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpDelete("{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        public IActionResult DeleteExpense(int id)
+        {
+            try
+            {
+                _expenseCrud.DeleteExpense(id);
+                return NoContent();
+            }
+            catch (System.Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        public IActionResult GetAllExpenses()
+        {
+            try
+            {
+                var expenses = _expenseCrud.GetAllExpenses();
+                return Ok(expenses);
+            }
+            catch (System.Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
+    
 }

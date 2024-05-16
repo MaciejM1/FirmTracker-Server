@@ -1,4 +1,5 @@
 ﻿using FirmTracker_Server.nHibernate;
+using FirmTracker_Server.nHibernate.Products;
 
 namespace FirmTracker_Server.nHibernate.Expenses
 {
@@ -32,6 +33,74 @@ namespace FirmTracker_Server.nHibernate.Expenses
                 query.SetParameter("expenseId", expenseId);
                 var expense = query.UniqueResult<Expense>();*/
                 return session.Get<Expense>(expenseId);
+            }
+        }
+        public DateTime GetExpenseDate(int expenseId)
+        {
+            using(var session = SessionFactory.OpenSession())
+            {
+                var expense = session.Query<Expense>()
+                    .Where(e => e.Id == expenseId)
+                    .Select(e => e.Date)
+                    .FirstOrDefault();
+                return expense;
+            }
+        }
+        public decimal GetExpenseValue(int expenseId)
+        {
+            using (var session = SessionFactory.OpenSession())
+            {
+                var expense = session.Query<Expense>()
+                    .Where(e => e.Id == expenseId)
+                    .Select(e => e.Value)
+                    .FirstOrDefault();
+                return expense;
+            }
+        }
+
+        public void UpdateExpense(Expense expense)
+        {
+            using (var session = SessionFactory.OpenSession())
+            using (var transaction = session.BeginTransaction())
+            {
+                try
+                {
+                    session.Update(expense);
+                    transaction.Commit();
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw;
+                }
+            }
+        }
+        
+        public void DeleteExpense(int expenseId)
+        {
+            using (var session = SessionFactory.OpenSession())
+            using (var transaction = session.BeginTransaction())
+            try
+            {
+                var expense = session.Get<Expense>(expenseId);
+                if (expense != null)
+                    {
+                        session.Delete(expense);
+                        transaction.Commit();
+                    }
+
+            }
+            catch {
+                    transaction.Rollback();
+                    throw;
+                }
+        }
+
+        public IList<Expense> GetAllExpenses()
+        {
+            using (var session = SessionFactory.OpenSession())
+            {
+                return session.Query<Expense>().ToList();
             }
         }
     }
