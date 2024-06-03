@@ -1,7 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using FirmTracker_Server.nHibernate.Products;
-using FirmTracker_Server;
-using System.Collections.Generic;
+﻿using FirmTracker_Server.nHibernate.Products;
+using Microsoft.AspNetCore.Mvc;
 namespace FirmTracker_Server.Controllers
 {
     [Route("api/[controller]")]
@@ -16,7 +14,12 @@ namespace FirmTracker_Server.Controllers
         }
 
         // POST: api/Products
+        /// <summary>
+        /// Creates a new product.
+        /// </summary>
         [HttpPost]
+        [ProducesResponseType(200)] // Created
+        [ProducesResponseType(400)] // Bad Request
         public IActionResult CreateProduct([FromBody] Product product)
         {
             try
@@ -32,6 +35,8 @@ namespace FirmTracker_Server.Controllers
 
         // GET: api/Products/5
         [HttpGet("{id}")]
+        [ProducesResponseType(200)] // Created
+        [ProducesResponseType(400)] // Bad Request
         public IActionResult GetProduct(int id)
         {
             var product = _productCrud.GetProduct(id);
@@ -42,6 +47,8 @@ namespace FirmTracker_Server.Controllers
 
         // PUT: api/Products/5
         [HttpPut("{id}")]
+        [ProducesResponseType(200)] // Created
+        [ProducesResponseType(400)] // Bad Request
         public IActionResult UpdateProduct(int id, [FromBody] Product product)
         {
             if (id != product.Id)
@@ -60,6 +67,8 @@ namespace FirmTracker_Server.Controllers
 
         // DELETE: api/Products/5
         [HttpDelete("{id}")]
+        [ProducesResponseType(200)] // Created
+        [ProducesResponseType(400)] // Bad Request
         public IActionResult DeleteProduct(int id)
         {
             try
@@ -75,10 +84,44 @@ namespace FirmTracker_Server.Controllers
 
         // GET: api/Products
         [HttpGet]
+        [ProducesResponseType(200)] // Created
+        [ProducesResponseType(400)] // Bad Request
         public IActionResult GetAllProducts()
         {
             var products = _productCrud.GetAllProducts();
             return Ok(products);
+        }
+
+        [HttpPost("CalculateTotalPrice")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        public IActionResult CalculateTotalPrice([FromBody] ProductOrder[] orders)
+        {
+            decimal totalPrice = 0;
+            decimal discount = 0;
+            foreach (var order in orders)
+            {
+                discount = order.Discount;
+                var product = _productCrud.GetProduct(order.ProductId);
+                if (product == null)
+                {
+                    return BadRequest($"Product with ID {order.ProductId} not found.");
+                }
+                totalPrice += product.Price * order.Quantity;
+            }
+
+            // Apply discount
+            decimal discountAmount = totalPrice * (discount / 100);
+            totalPrice -= discountAmount;
+
+            return Ok(new { TotalPrice = totalPrice });
+        }
+
+        public class ProductOrder
+        {
+            public int ProductId { get; set; }
+            public int Quantity { get; set; }
+            public decimal Discount { get; set; }   
         }
     }
 }

@@ -25,7 +25,16 @@ namespace FirmTracker_Server.nHibernate
                 .Database(MsSqlConfiguration.MsSql2012
         .ConnectionString(c => c.Is(connectionString))
         .ShowSql())
-                .Mappings(m => m.FluentMappings.AddFromAssemblyOf<Products.ProductMapping>())
+                .Mappings(m =>
+                {
+                    m.FluentMappings
+                    .AddFromAssemblyOf<Products.ProductMapping>()
+                    .AddFromAssemblyOf<Transactions.TransactionMapping>()
+                    .AddFromAssemblyOf<Transactions.TransactionProductMapping>()
+                    .AddFromAssemblyOf<Transactions.Transaction2Mapping>()
+                    .AddFromAssemblyOf<Transactions.TransactionWithProductsMapping>()
+                    .AddFromAssemblyOf<Expenses.ExpenseMapping>();
+                })
                 .ExposeConfiguration(cfg => new SchemaExport(cfg).Create(true, true))  //SchemaUpdate . Execute  dla only update
                 .BuildSessionFactory();
         }
