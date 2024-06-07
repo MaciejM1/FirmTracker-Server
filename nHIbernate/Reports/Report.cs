@@ -1,7 +1,7 @@
 ﻿using FirmTracker_Server.nHibernate.Expenses;
 using FirmTracker_Server.nHibernate.Transactions;
 
-namespace FirmTracker_Server.nHIbernate.Reports
+namespace FirmTracker_Server.nHibernate.Reports
 {
     public class Report
     {

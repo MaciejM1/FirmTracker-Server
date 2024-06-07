@@ -33,7 +33,8 @@ namespace FirmTracker_Server.nHibernate
                     .AddFromAssemblyOf<Transactions.TransactionProductMapping>()
                     .AddFromAssemblyOf<Transactions.Transaction2Mapping>()
                     .AddFromAssemblyOf<Transactions.TransactionWithProductsMapping>()
-                    .AddFromAssemblyOf<Expenses.ExpenseMapping>();
+                    .AddFromAssemblyOf<Expenses.ExpenseMapping>()
+                    .AddFromAssemblyOf<Reports.ReportMapping>();
                 })
                 .ExposeConfiguration(cfg => new SchemaExport(cfg).Create(true, true))  //SchemaUpdate . Execute  dla only update
                 .BuildSessionFactory();

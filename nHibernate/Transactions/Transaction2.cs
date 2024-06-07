@@ -1,4 +1,5 @@
 ﻿using FirmTracker_Server.nHibernate.Products;
+using FirmTracker_Server.nHibernate.Reports;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,7 @@ namespace FirmTracker_Server.nHibernate.Transactions
         public virtual decimal Discount { get; set; }
         public virtual string Description { get; set; }
         public virtual decimal TotalPrice { get; set; }//=> TransactionProducts.Sum(tp => ((tp.Quantity * tp.UnitPrice)* ((1 - (Discount / 100)))));// (1 - (Discount / 100)));
+        public virtual IList<Report> Reports { get; set; } = new List<Report>();
 
         public Transaction2()
         {

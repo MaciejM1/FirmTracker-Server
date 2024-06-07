@@ -1,5 +1,5 @@
 ﻿using FluentNHibernate.Mapping;
-namespace FirmTracker_Server.nHIbernate.Reports
+namespace FirmTracker_Server.nHibernate.Reports
 {
     public class ReportMapping : ClassMap<Report>
     {
