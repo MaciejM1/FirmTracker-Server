@@ -5,6 +5,7 @@ using System.Text.Json.Serialization;
 using System.Text.Json;
 using System.Transactions;
 using FirmTracker_Server.nHibernate.Products;
+using FirmTracker_Server.nHibernate;
 
 namespace FirmTracker_Server.Controllers
 {
@@ -41,7 +42,17 @@ namespace FirmTracker_Server.Controllers
                     int type = _productCRUD.GetProductType(product.ProductID);
                     if (type == 1)
                     {
-                        transaction.TotalPrice += ((product.Quantity * price) * ((1 - (transaction.Discount / 100))));
+                        int availability = _productCRUD.GetProductAvailability(product.ProductID);
+
+                        if (product.Quantity > availability)
+                        {
+                            return BadRequest($"Can't add product {product.ProductID} to transaction. Available: {availability}, Desired: {product.Quantity}");
+                        }
+                        else
+                        {
+                            transaction.TotalPrice += ((product.Quantity * price) * ((1 - (transaction.Discount / 100))));
+                        }
+
                     }
                     else
                     {
@@ -99,7 +110,7 @@ namespace FirmTracker_Server.Controllers
                     product.TransactionId = transaction.Id; // This might be 0 at this point if transaction isn't saved yet
                     decimal price = _productCRUD.GetProductPrice(product.ProductID);
                     transaction.TotalPrice += ((product.Quantity * price) * ((1 - (transaction.Discount / 100))));
-                }
+                        }
                 _transactionCRUD.UpdateTransaction(transaction);
 
                 // Now that the transaction is saved, update each product with the correct TransactionId
