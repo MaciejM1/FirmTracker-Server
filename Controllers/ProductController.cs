@@ -45,6 +45,17 @@ namespace FirmTracker_Server.Controllers
             return Ok(product);
         }
 
+        [HttpGet("name/{name}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        public IActionResult GetProductByName(string name)
+        {
+            var product = _productCrud.GetProductByName(name);
+            if (product ==null)
+                return NotFound();
+            return Ok(product);
+        }
+
         // PUT: api/Products/5
         [HttpPut("{id}")]
         [ProducesResponseType(200)] // Created
