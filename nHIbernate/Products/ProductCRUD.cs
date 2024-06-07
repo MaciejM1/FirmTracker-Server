@@ -53,6 +53,19 @@ namespace FirmTracker_Server.nHibernate.Products
                 return product;
             }
         }
+
+        public int GetProductAvailability(int productId)
+        {
+            using(var session = SessionFactory.OpenSession())
+            {
+                var product = session.Query<Product>()
+                    .Where(p => p.Id == productId)
+                    .Select(p => p.Availability)
+                    .FirstOrDefault();
+                return product;
+            }
+        }
+
         public Product GetProduct(int productId)
         {
             using (var session = SessionFactory.OpenSession())
