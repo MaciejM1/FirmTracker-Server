@@ -61,6 +61,16 @@ namespace FirmTracker_Server.nHibernate.Products
             }
         }
 
+        public Product GetProductByName(string productName)
+        {
+            using (var session = SessionFactory.OpenSession())
+            {
+                var query = session.CreateQuery("from Product where Name = :name");
+                query.SetParameter("name", productName);
+                return query.UniqueResult<Product>();
+            }
+        }
+
         public void UpdateProduct(Product product)
         {
             using (var session = SessionFactory.OpenSession())
