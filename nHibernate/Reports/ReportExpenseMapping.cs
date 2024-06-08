@@ -7,9 +7,9 @@ namespace FirmTracker_Server.nHibernate.Reports
         public ReportExpenseMapping()
         {
             Table("ReportExpenses");
-            Id(x => x.Id);
-            References(x => x.ReportId, "ReportId");
-            References(x => x.ExpenseId, "ExpenseId");
+            CompositeId()
+                .KeyReference(x => x.Report, "ReportId")
+                .KeyReference(x => x.Expense, "ExpenseId");
         }
     }
 }

@@ -13,10 +13,15 @@ namespace FirmTracker_Server.nHibernate.Reports
         public virtual decimal TotalExpenses { get; set; }
         public virtual decimal TotalBalance { get; set; }
 
-        public virtual IList<ReportTransaction> ReportTransactions { get; set; } = new List<ReportTransaction>();
+        /*public virtual IList<ReportTransaction> ReportTransactions { get; set; } = new List<ReportTransaction>();
         public virtual IList<ReportExpense> ReportExpenses { get; set; } = new List<ReportExpense>();
 
        
+        public Report()
+        {
+            ReportTransactions = new List<ReportTransaction>();
+            ReportExpenses = new List<ReportExpense>();
+        }*/
 
 
         public class DateRangeDto

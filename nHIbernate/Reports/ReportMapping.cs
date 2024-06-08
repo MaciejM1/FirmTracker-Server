@@ -13,13 +13,15 @@ namespace FirmTracker_Server.nHibernate.Reports
             Map(x => x.TotalExpenses);
             Map(x => x.TotalBalance);
 
-            HasMany(x => x.ReportTransactions)
-            .Cascade.All()
-            .Inverse();
+            /*HasMany(x => x.ReportTransactions)
+            .KeyColumn("ReportId")
+                .Cascade.AllDeleteOrphan()
+                .Inverse();
 
             HasMany(x => x.ReportExpenses)
-                .Cascade.All()
-                .Inverse();
+            .KeyColumn("ReportId")
+                .Cascade.AllDeleteOrphan()
+                .Inverse();*/
 
         }
 
