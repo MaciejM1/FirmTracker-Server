@@ -10,14 +10,14 @@ namespace FirmTracker_Server.nHibernate.Reports
 {
     public class ReportCRUD
     {
-        public Report AddReport(DateTime fromDate, DateTime toDate)
+        public Report AddReport(Report report, IList<nHibernate.Transactions.Transaction> transactions, IList<Expense> expenses /*DateTime fromDate, DateTime toDate*/)
         {
             using (var session = SessionFactory.OpenSession())
             using (var sessionTransaction = session.BeginTransaction())
             {
                 try
                 {
-                    var transactions = session.Query<nHibernate.Transactions.Transaction>()
+                    /*var transactions = session.Query<nHibernate.Transactions.Transaction>()
                         .Where(t => t.Date >= fromDate && t.Date <= toDate)
                         .ToList();
 
@@ -37,29 +37,38 @@ namespace FirmTracker_Server.nHibernate.Reports
                         TotalExpenses = totalExpenses,
                         TotalBalance = totalBalance
 
-                    };
+                    };*/
+
+                    session.Save(report);
 
                     foreach (var transactionItem in transactions)
                     {
+                        //var trans = session.Load<nHibernate.Transactions.Transaction>(transactionItem);
                         var reportTransaction = new ReportTransaction
                         {
-                            ReportId = report.Id,
-                            TransactionId = transactionItem.Id
+                            Report = report,
+                            Transaction = transactionItem
                         };
-                        report.ReportTransactions.Add(reportTransaction);
+                        session.Save(reportTransaction);
+                        //report.ReportTransactions.Add(reportTransaction);
+                        //report.TotalIncome += trans.TotalPrice;
                     }
 
                     foreach (var expenseItem in expenses)
                     {
+                        //var expense = session.Load<Expense>(expenseItem);
                         var reportExpense = new ReportExpense
                         {
-                            ReportId = report.Id,
-                            ExpenseId = expenseItem.Id
+                            Report = report,
+                            Expense = expenseItem
                         };
-                        report.ReportExpenses.Add(reportExpense);
+                        session.Save(reportExpense);
+                        //report.TotalExpenses += expense.Value;
+                        //report.ReportExpenses.Add(reportExpense);
                     }
 
-                    session.Save(report);
+
+                    //session.Save(report);
                     sessionTransaction.Commit();
                     return report;
                 }

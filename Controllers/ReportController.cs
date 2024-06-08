@@ -3,6 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using NuGet.Protocol;
+using FirmTracker_Server.nHibernate.Expenses;
+using FirmTracker_Server.nHibernate.Products;
+using FirmTracker_Server.nHibernate;
+using NHibernate.Linq;
 
 namespace FirmTracker_Server.Controllers
 {
@@ -11,10 +15,12 @@ namespace FirmTracker_Server.Controllers
     public class ReportController : ControllerBase
     {
         private readonly ReportCRUD _reportCRUD;
+        private readonly ProductCRUD _productCRUD;
 
         public ReportController()
         {
             _reportCRUD = new ReportCRUD();
+            _productCRUD = new ProductCRUD();
         }
         [HttpPost]
         [ProducesResponseType(201)] //Created
@@ -23,14 +29,62 @@ namespace FirmTracker_Server.Controllers
         {
             try
             {
-            
-            if (dateRange == null || dateRange.FromDate >= dateRange.ToDate)
-            {
-                return BadRequest("Invalid date range.");
-            }
+                var fromDate = dateRange.FromDate;
+                var toDate = dateRange.ToDate;
+                using (var session = SessionFactory.OpenSession())
+                {
+                    var transactions = session.Query<nHibernate.Transactions.Transaction>()
+                        .Where(t => t.Date >= fromDate && t.Date <= toDate)
+                        .FetchMany(t => t.TransactionProducts)
+                        .ToList();
 
-            var report = _reportCRUD.AddReport(dateRange.FromDate, dateRange.ToDate);
-                return CreatedAtAction(nameof(GetReport), new { id = report.Id }, report); // to change?
+                    var expenses = session.Query<Expense>()
+                        .Where(e => e.Date >= fromDate && e.Date <= toDate)
+                        .ToList();
+
+                    // Calculate total income from transactions
+                    decimal totalIncome = 0;
+                    foreach (var transaction in transactions)
+                    {
+                        foreach (var product in transaction.TransactionProducts)
+                        {
+                            decimal price = _productCRUD.GetProductPrice(product.ProductID);
+                            int type = _productCRUD.GetProductType(product.ProductID);
+                            if (type == 1)
+                            {
+                                totalIncome += ((product.Quantity * price) * ((1 - (transaction.Discount / 100))));
+                            }
+                            else
+                            {
+                                totalIncome += (price * ((1 - (transaction.Discount / 100))));
+                            }
+                        }
+                    }
+
+                    var totalExpenses = expenses.Sum(e => e.Value);
+                    var totalBalance = totalIncome - totalExpenses;
+
+                    var report = new Report
+                    {
+                        FromDate = fromDate,
+                        ToDate = toDate,
+                        TotalIncome = totalIncome,
+                        TotalExpenses = totalExpenses,
+                        TotalBalance = totalBalance
+                    };
+
+                    _reportCRUD.AddReport(report, transactions, expenses);
+
+                    return CreatedAtAction(nameof(GetReport), new { id = report.Id }, report);
+
+                    /*if (dateRange == null || dateRange.FromDate >= dateRange.ToDate)
+                    {
+                        return BadRequest("Invalid date range.");
+                    }
+
+                    var report = _reportCRUD.AddReport(dateRange.FromDate, dateRange.ToDate);
+                        return CreatedAtAction(nameof(GetReport), new { id = report.Id }, report); // to change?*/
+                }
             }
             catch (Exception ex)
             {
