@@ -12,12 +12,6 @@ namespace FirmTracker_Server.nHibernate.Expenses
             Map(x => x.Value);
             Map(x => x.Description);
 
-            HasManyToMany(x => x.Reports)
-            .Cascade.All()
-            .Table("ReportExpenses")
-            .ParentKeyColumn("ExpenseId")
-            .ChildKeyColumn("ReportId");
-
         }
     }
 }

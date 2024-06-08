@@ -19,11 +19,6 @@ namespace FirmTracker_Server.nHibernate.Transactions
                 .Cascade.AllDeleteOrphan()
                 .Inverse(); // Ustawienie Inverse() wskazuje, że to `TransactionProduct` jest właścicielem relacji
 
-            HasManyToMany(x => x.Reports)
-            .Cascade.All()
-            .Table("ReportTransactions")
-            .ParentKeyColumn("TransactionId")
-            .ChildKeyColumn("ReportId");
         }
     }
 }
