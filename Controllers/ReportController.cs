@@ -96,9 +96,6 @@ namespace FirmTracker_Server.Controllers
                 return BadRequest(ex.Message);
             }
 
-
-
-
         }
 
         [HttpGet("{id}")]
@@ -118,6 +115,33 @@ namespace FirmTracker_Server.Controllers
             var json = JsonSerializer.Serialize(report, options);
             return Ok(json);
         }
+
+        [HttpGet("{id}/transactions")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        public IActionResult GetReportTransactions(int reportId)
+        {
+            var transactions = _reportCRUD.GetReportTransactions(reportId);
+            if (transactions == null)
+            {
+                return NotFound();
+            }
+            return Ok(transactions);
+        }
+
+        [HttpGet("{id}/expenses")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        public IActionResult GetReportExpenses(int reportId)
+        {
+            var expenses = _reportCRUD.GetReportExpenses(reportId);
+            if (expenses == null)
+            {
+                return NotFound();
+            }
+            return Ok(expenses);
+        }
+
 
         [HttpGet]
         [ProducesResponseType(200)]

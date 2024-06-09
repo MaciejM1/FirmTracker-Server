@@ -99,6 +99,30 @@ namespace FirmTracker_Server.nHibernate.Reports
             }
         }
 
+
+        public IList<nHibernate.Transactions.Transaction> GetReportTransactions(int reportId)
+        {
+            using (var session = SessionFactory.OpenSession())
+            {
+                return session.Query<ReportTransaction>()
+                              .Where(rt => rt.Report.Id == reportId)
+                              .Select(rt => rt.Transaction)
+                              .Fetch(t => t.TransactionProducts)
+                              .ToList();
+            }
+        }
+
+        public IList<Expense> GetReportExpenses(int reportId)
+        {
+            using (var session = SessionFactory.OpenSession())
+            {
+                return session.Query<ReportExpense>()
+                              .Where(re => re.Report.Id == reportId)
+                              .Select(re => re.Expense)
+                              .ToList();
+            }
+        }
+
         public Report UpdateReport(Report report, IList<nHibernate.Transactions.Transaction> transactions, IList<Expense> expenses)
         {
             using (var session = SessionFactory.OpenSession())
