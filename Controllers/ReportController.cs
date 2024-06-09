@@ -8,6 +8,7 @@ using FirmTracker_Server.nHibernate.Products;
 using FirmTracker_Server.nHibernate;
 using NHibernate.Linq;
 
+
 namespace FirmTracker_Server.Controllers
 {
     [Route("api/[controller]")]
@@ -31,6 +32,10 @@ namespace FirmTracker_Server.Controllers
             {
                 var fromDate = dateRange.FromDate;
                 var toDate = dateRange.ToDate;
+                if (fromDate >= toDate)
+                {
+                    return BadRequest();
+                }
                 using (var session = SessionFactory.OpenSession())
                 {
                     var transactions = session.Query<nHibernate.Transactions.Transaction>()
@@ -124,6 +129,91 @@ namespace FirmTracker_Server.Controllers
                 return NotFound();
 
             return Ok(reports);
+        }
+
+        [HttpPut("{id}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public IActionResult UpdateReport(int reportId, [FromBody] Report.DateRangeDto dateRange)
+        {
+            try
+            {
+                var report = _reportCRUD.GetReport(reportId);
+                if (report == null)
+                {
+                    return NotFound();
+                }
+                using (var session = SessionFactory.OpenSession())
+                {
+                    var fromDate = dateRange.FromDate;
+                    var toDate = dateRange.ToDate;
+                    if (fromDate >= toDate)
+                    {
+                        return BadRequest();
+                    }
+                    var transactions = session.Query<nHibernate.Transactions.Transaction>()
+                .Where(t => t.Date >= fromDate && t.Date <= toDate)
+                .FetchMany(t => t.TransactionProducts)
+                .ToList();
+
+                    var expenses = session.Query<Expense>()
+                        .Where(e => e.Date >= fromDate && e.Date <= toDate)
+                        .ToList();
+
+                    // Calculate total income from transactions
+                    decimal totalIncome = 0;
+                    foreach (var transaction in transactions)
+                    {
+                        foreach (var product in transaction.TransactionProducts)
+                        {
+                            decimal price = _productCRUD.GetProductPrice(product.ProductID);
+                            int type = _productCRUD.GetProductType(product.ProductID);
+                            if (type == 1)
+                            {
+                                totalIncome += ((product.Quantity * price) * ((1 - (transaction.Discount / 100))));
+                            }
+                            else
+                            {
+                                totalIncome += (price * ((1 - (transaction.Discount / 100))));
+                            }
+                        }
+                    }
+
+                    var totalExpenses = expenses.Sum(e => e.Value);
+                    var totalBalance = totalIncome - totalExpenses;
+
+                    report.FromDate = fromDate;
+                    report.ToDate = toDate;
+                    report.TotalIncome = totalIncome;
+                    report.TotalExpenses = totalExpenses;
+                    report.TotalBalance = totalBalance;
+
+                    _reportCRUD.UpdateReport(report, transactions, expenses);
+
+                    return NoContent();
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpDelete]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public IActionResult DeleteReport(int reportId)
+        {
+            try
+            {
+                _reportCRUD.DeleteReport(reportId);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
     }
 }

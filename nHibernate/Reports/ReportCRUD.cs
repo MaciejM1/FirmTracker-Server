@@ -98,5 +98,84 @@ namespace FirmTracker_Server.nHibernate.Reports
                 return reports;
             }
         }
+
+        public Report UpdateReport(Report report, IList<nHibernate.Transactions.Transaction> transactions, IList<Expense> expenses)
+        {
+            using (var session = SessionFactory.OpenSession())
+            using (var transaction = session.BeginTransaction())
+            {
+                try
+                {
+                    session.Update(report);
+
+
+                    session.CreateQuery("delete from ReportTransaction where Report.Id = :reportId")
+                           .SetParameter("reportId", report.Id)
+                           .ExecuteUpdate();
+                    session.CreateQuery("delete from ReportExpense where Report.Id = :reportId")
+                           .SetParameter("reportId", report.Id)
+                           .ExecuteUpdate();
+
+                    foreach (var transactionItem in transactions)
+                    {
+                        var reportTransaction = new ReportTransaction
+                        {
+                            Report = report,
+                            Transaction = transactionItem
+                        };
+                        session.Save(reportTransaction);
+                    }
+
+                    foreach (var expenseItem in expenses)
+                    {
+                        var reportExpense = new ReportExpense
+                        {
+                            Report = report,
+                            Expense = expenseItem
+                        };
+                        session.Save(reportExpense);
+                    }
+
+                    transaction.Commit();
+                    return report;
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw;
+                }
+            }
+        }
+
+        public void DeleteReport(int reportId)
+        {
+            using (var session = SessionFactory.OpenSession())
+            using (var transaction = session.BeginTransaction())
+            {
+                try
+                {
+                    session.CreateQuery("delete from ReportTransaction where Report.Id = :reportId")
+                           .SetParameter("reportId", reportId)
+                           .ExecuteUpdate();
+                    session.CreateQuery("delete from ReportExpense where Report.Id = :reportId")
+                           .SetParameter("reportId", reportId)
+                           .ExecuteUpdate();
+
+                    var report = session.Get<Report>(reportId);
+                    if (report != null)
+                    {
+                        session.Delete(report);
+                    }
+
+                    transaction.Commit();
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw;
+                }
+            }
+        }
+
     }
 }

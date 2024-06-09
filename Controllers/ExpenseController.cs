@@ -30,7 +30,7 @@ namespace FirmTracker_Server.Controllers
         // GET: api/Expenses
         [HttpGet("{id}")]
         [ProducesResponseType(200)] // Created
-        [ProducesResponseType(400)] // Bad Request
+        [ProducesResponseType(404)] // Bad Request
         public IActionResult GetExpense(int id)
         {
             var expense = _expenseCrud.GetExpense(id);
@@ -43,8 +43,8 @@ namespace FirmTracker_Server.Controllers
 
         //PUT: api/Expenses
         [HttpPut("{id}")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(200)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
         public IActionResult UpdateExpense(int id, [FromBody] Expense expense)
         {
             if (id != expense.Id)
@@ -63,8 +63,8 @@ namespace FirmTracker_Server.Controllers
         }
 
         [HttpDelete("{id}")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
         public IActionResult DeleteExpense(int id)
         {
             try
