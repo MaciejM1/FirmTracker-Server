@@ -119,9 +119,9 @@ namespace FirmTracker_Server.Controllers
         [HttpGet("{id}/transactions")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
-        public IActionResult GetReportTransactions(int reportId)
+        public IActionResult GetReportTransactions(int id)
         {
-            var transactions = _reportCRUD.GetReportTransactions(reportId);
+            var transactions = _reportCRUD.GetReportTransactions(id);
             if (transactions == null)
             {
                 return NotFound();
@@ -132,9 +132,9 @@ namespace FirmTracker_Server.Controllers
         [HttpGet("{id}/expenses")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
-        public IActionResult GetReportExpenses(int reportId)
+        public IActionResult GetReportExpenses(int id)
         {
-            var expenses = _reportCRUD.GetReportExpenses(reportId);
+            var expenses = _reportCRUD.GetReportExpenses(id);
             if (expenses == null)
             {
                 return NotFound();
@@ -159,11 +159,11 @@ namespace FirmTracker_Server.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult UpdateReport(int reportId, [FromBody] Report.DateRangeDto dateRange)
+        public IActionResult UpdateReport(int id, [FromBody] Report.DateRangeDto dateRange)
         {
             try
             {
-                var report = _reportCRUD.GetReport(reportId);
+                var report = _reportCRUD.GetReport(id);
                 if (report == null)
                 {
                     return NotFound();
@@ -227,11 +227,11 @@ namespace FirmTracker_Server.Controllers
         [HttpDelete]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        public IActionResult DeleteReport(int reportId)
+        public IActionResult DeleteReport(int id)
         {
             try
             {
-                _reportCRUD.DeleteReport(reportId);
+                _reportCRUD.DeleteReport(id);
                 return NoContent();
             }
             catch (Exception ex)
