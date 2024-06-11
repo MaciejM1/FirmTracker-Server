@@ -39,6 +39,14 @@ namespace FirmTracker_Server.Controllers
         [ProducesResponseType(400)] // Bad Request
         public IActionResult CreateProduct([FromBody] Product product)
         {
+            if (product.Type != 0 && product.Type != 1)
+            {
+                return BadRequest("Product type must be set to 0 or 1");
+            }
+            if (product.Type == 0 && product.Availability != 0)
+            {
+                return BadRequest("Services availability must be set to 0");
+            }
             try
             {
                 _productCrud.AddProduct(product);
@@ -81,6 +89,14 @@ namespace FirmTracker_Server.Controllers
         {
             if (id != product.Id)
                 return BadRequest("Product ID mismatch");
+            if (product.Type != 0 && product.Type != 1)
+            {
+                return BadRequest("Product type must be set to 0 or 1");
+            }
+            if (product.Type == 0 && product.Availability != 0)
+            {
+                return BadRequest("Services availability must be set to 0");
+            }
 
             try
             {
