@@ -1,4 +1,21 @@
-﻿using FirmTracker_Server.Controllers;
+﻿/*
+ * This file is part of FirmTracker - Server.
+ *
+ * FirmTracker - Server is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * FirmTracker - Server is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with FirmTracker - Server. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+using FirmTracker_Server.Controllers;
 using FirmTracker_Server.nHibernate; 
 using FirmTracker_Server.nHibernate.Products;
 using FirmTracker_Server.nHibernate.Transactions;
@@ -9,13 +26,24 @@ namespace FirmTracker_Server
 {
     public class TestClass
     {
+        public static Product CreateProduct(string name, string description, decimal price, int type, int availability)
+        {
+            return new Product
+            {
+                Name = name,
+                Description = description,
+                Price = price,
+                Type = type,
+                Availability = availability
+            };
+        }
         public void AddTestProduct()
         {
            // SessionFactory.Init(ConnectionString);
 
             var product = new nHibernate.Products.Product
             {
-                Name = "Produkt 1",
+                Name = "Produkt test 1",
                 Description = "testowy produkt",
                 Price = 11.50m,
                 Type = 1, 
@@ -29,42 +57,61 @@ namespace FirmTracker_Server
                 Type = 0,
                 Availability = 0
             };
-            var product3 = new nHibernate.Products.Product
+            
+            var products = new List<Product>
             {
-                Name = "Produkt 2",
-                Description = "produkt",
-                Price = 16.50m,
-                Type = 1,
-                Availability = 20
-            };
-            var product4 = new nHibernate.Products.Product
-            {
-                Name = "Produkt 3",
-                Description = "produkt",
-                Price = 25.00m,
-                Type = 1,
-                Availability = 10
-            };
-            var product5 = new nHibernate.Products.Product
-            {
-                Name = "Usługa 2",
-                Description = "usługa",
-                Price = 700.00m,
-                Type = 0,
-                Availability = 0
-            };
+                CreateProduct("Tarta_truskawka", "produkt", 31.99m, 1, 10),
+                CreateProduct("Tarta_czekolada", "produkt", 30.99m, 1, 8),
+                CreateProduct("Tarta_agrest", "produkt", 32.90m, 1, 8),
+                CreateProduct("Tarta_pistacja", "produkt", 35.99m, 1, 12),
+                CreateProduct("Tarta_karmel", "produkt", 32.00m, 1, 12),
+                CreateProduct("Rolada_beza", "produkt", 21.00m, 1, 5),
+                CreateProduct("Rolada_róża", "produkt", 21.90m, 1, 10),
+                CreateProduct("Kostka_truskawka", "produkt", 12.00m, 1, 11),
+                CreateProduct("Kostka_lemonCurd", "produkt", 13.99m, 1, 13),
+                CreateProduct("Kostka_hiszpańska", "produkt", 11.99m, 1, 8),
+                CreateProduct("Kostka_wiosenna", "produkt", 11.99m, 1, 5),
+                CreateProduct("Kostka_jabłka", "produkt", 12.00m, 1, 5),
+                CreateProduct("Kostka_porzeczka", "produkt", 12.99m, 1, 5),
+                CreateProduct("Kostka_królewska", "produkt", 13.50m, 1, 5),
+                CreateProduct("Kostka_czekolada", "produkt", 14.50m, 1, 10),
+                CreateProduct("Kostka_wiśnia", "produkt", 12.50m, 1, 5),
+                CreateProduct("Kostka_beza", "produkt", 13.50m, 1, 20),
+                CreateProduct("Kostka_leśna", "produkt", 12.00m, 1, 20),
+                CreateProduct("Kostka_kawowa", "produkt", 12.00m, 1, 10),
+                CreateProduct("Kostka_galaretka", "produkt", 12.50m, 1, 25),
+                CreateProduct("Kostka_firmowa", "produkt", 12.50m, 1, 5),
+                CreateProduct("Sernik_wiśnia", "produkt", 33.00m, 1, 6),
+                CreateProduct("Sernik_truskawka", "produkt", 31.00m, 1, 5),
+                CreateProduct("Sernik_pistacja", "produkt", 38.90m, 1, 5),
+                CreateProduct("Sernik_fantazja", "produkt", 33.00m, 1, 7),
+                CreateProduct("Sernik_rafaello", "produkt", 33.00m, 1, 5),
+                CreateProduct("Sernik_nutella", "produkt", 35.50m, 1, 6),
+                CreateProduct("Sernik_mango", "produkt", 33.00m, 1, 5),
+                CreateProduct("Sernik_rabarbar", "produkt", 37.99m, 1, 5),
+                CreateProduct("Sernik_biszkopt", "produkt", 39.00m, 1, 11),
+                CreateProduct("Tartaletka", "produkt", 13.20m, 1, 30),
+                CreateProduct("Strudel_jabłko", "produkt", 29.00m, 1, 20),
+                CreateProduct("Placek_rabarbar", "produkt", 24.00m, 1, 18),
+                CreateProduct("Placek_jogurt", "produkt", 23.00m, 1, 13),
+                CreateProduct("Placek_śliwka", "produkt", 22.00m, 1, 14),
+                CreateProduct("Placek_maślany", "produkt", 18.00m, 1,11),
+
+
+              };
+         
             var transaction1 = new Transaction
             {
                 Date = DateTime.Now.AddDays(-2),
-                Description = "testowa transakcja",
-                Discount = 10,
+                Description = "zamówienie telefon",
+                Discount = 5,
                 EmployeeId = 1,
                 PaymentType = "Karta kredytowa",
             };
             var transaction2 = new Transaction
             {
                 Date = DateTime.Now.AddDays(-3),
-                Description = "testowa transakcja",
+                Description = "sprzedaż - kasa",
                 Discount = 30,
                 EmployeeId = 2,
                 PaymentType = "Gotówka",
@@ -72,7 +119,15 @@ namespace FirmTracker_Server
             var transaction3 = new Transaction
             {
                 Date = DateTime.Now,
-                Description = "testowa transakcja",
+                Description = "sprzedaż - kasa",
+                Discount = 15,
+                EmployeeId = 1,
+                PaymentType = "BLIK",
+            };
+            var transaction4 = new Transaction
+            {
+                Date = DateTime.Now,
+                Description = "zamówienie",
                 Discount = 15,
                 EmployeeId = 1,
                 PaymentType = "BLIK",
@@ -81,8 +136,20 @@ namespace FirmTracker_Server
             var expense1 = new Expense
             {
                 Date = DateTime.Now,
-                Value = 1003.9m,
-                Description = "testowy rozchód"
+                Value = 7999.9m,
+                Description = "zakup maszyny do lodów FZ/2/6/2024"
+            };
+            var expense2 = new Expense
+            {
+                Date = DateTime.Now,
+                Value = 990.99m,
+                Description = "naprawa pieca - 25.05.2024"
+            };
+            var expense3 = new Expense
+            { Date = DateTime.Now,
+            Value = 1800.00m,
+            Description = "zakup składników "
+            
             };
 
             try
@@ -92,20 +159,23 @@ namespace FirmTracker_Server
                 ExpenseCRUD expenseCrud = new ExpenseCRUD();
                 productCrud.AddProduct(product);
                 productCrud.AddProduct(product2);
-                productCrud.AddProduct(product3);
-                productCrud.AddProduct(product4);
-                productCrud.AddProduct(product5);
+               // productCrud.AddProduct(product3);
+                foreach(var clientProduct in products)
+                {
+                    productCrud.AddProduct(clientProduct);
+                }
                 transactionCrud.AddTransaction(transaction1);
                 transactionCrud.AddTransaction(transaction2);
                 transactionCrud.AddTransaction(transaction3);
+                transactionCrud.AddTransaction(transaction4);
                 expenseCrud.AddExpense(expense1);
-                
+                expenseCrud.AddExpense(expense2);
 
                 List<TransactionProduct> testTransactionProducts = new List<TransactionProduct>  {
-         new TransactionProduct { ProductID = 1, Quantity = 2 },
-         new TransactionProduct { ProductID = 2, Quantity = 1 },
-         new TransactionProduct { ProductID = 3, Quantity = 10 }
-     };
+                    new TransactionProduct { ProductID =17, Quantity = 10 },
+                    new TransactionProduct { ProductID = 14, Quantity = 1 },
+                    new TransactionProduct { ProductID = 1, Quantity = 2 },
+                };
                 foreach (var transactionProduct in testTransactionProducts)
                 {
                     transactionCrud.AddTransactionProductToTransaction(transaction1.Id, transactionProduct);
@@ -114,8 +184,8 @@ namespace FirmTracker_Server
 
                 List<TransactionProduct> testTransactionProducts2 = new List<TransactionProduct>
                 {
-                    new TransactionProduct { ProductID = 4, Quantity=5},
-                    new TransactionProduct { ProductID = 5, Quantity=1}
+                    new TransactionProduct { ProductID = 28, Quantity=5},
+                    new TransactionProduct { ProductID = 22, Quantity=5}
                 };
                 foreach (var transactionProduct in testTransactionProducts2)
                 {
@@ -133,7 +203,16 @@ namespace FirmTracker_Server
                     transactionCrud.AddTransactionProductToTransaction(transaction3.Id, transactionProduct);
 
                 }
+                List<TransactionProduct> testTransactionProducts4 = new List<TransactionProduct>
+                {
+                    new TransactionProduct { ProductID = 33, Quantity=12},
+                    new TransactionProduct { ProductID = 12, Quantity=1}
+                };
+                foreach (var transactionProduct in testTransactionProducts4)
+                {
+                    transactionCrud.AddTransactionProductToTransaction(transaction4.Id, transactionProduct);
 
+                }
 
             }
             catch(Exception ex)

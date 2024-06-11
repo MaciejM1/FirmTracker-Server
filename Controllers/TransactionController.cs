@@ -1,4 +1,21 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿/*
+ * This file is part of FirmTracker - Server.
+ *
+ * FirmTracker - Server is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * FirmTracker - Server is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with FirmTracker - Server. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+using Microsoft.AspNetCore.Mvc;
 using FirmTracker_Server.nHibernate.Transactions;
 using System;
 using System.Text.Json.Serialization;
@@ -34,10 +51,10 @@ namespace FirmTracker_Server.Controllers
         {
             try
             {
-                // Before adding the transaction, ensure each product is linked properly
+                
                 foreach (var product in transaction.TransactionProducts)
                 {
-                    product.TransactionId = transaction.Id; // This might be 0 at this point if transaction isn't saved yet
+                    product.TransactionId = transaction.Id; 
                     decimal price = _productCRUD.GetProductPrice(product.ProductID);
                     int type = _productCRUD.GetProductType(product.ProductID);
                     if (type == 1)
@@ -62,15 +79,15 @@ namespace FirmTracker_Server.Controllers
 
                 _transactionCRUD.AddTransaction(transaction);
 
-                // Now that the transaction is saved, update each product with the correct TransactionId
+                
                 foreach (var product in transaction.TransactionProducts)
                 {
-                    product.TransactionId = transaction.Id; // Now transaction.Id is a valid ID after saving
+                    product.TransactionId = transaction.Id; 
                     _transactionCRUD.UpdateTransactionProduct(product);
                 }
                 
 
-              //  session.Flush(); // Ensure changes are committed if managing session manually
+              //  session.Flush(); 
 
                 return CreatedAtAction(nameof(GetTransaction), new { id = transaction.Id }, transaction);
             }
@@ -104,19 +121,19 @@ namespace FirmTracker_Server.Controllers
 
             try
             {
-                // Before adding the transaction, ensure each product is linked properly
+                
                 foreach (var product in transaction.TransactionProducts)
                 {
-                    product.TransactionId = transaction.Id; // This might be 0 at this point if transaction isn't saved yet
+                    product.TransactionId = transaction.Id; 
                     decimal price = _productCRUD.GetProductPrice(product.ProductID);
                     transaction.TotalPrice += ((product.Quantity * price) * ((1 - (transaction.Discount / 100))));
                         }
                 _transactionCRUD.UpdateTransaction(transaction);
 
-                // Now that the transaction is saved, update each product with the correct TransactionId
+               
                 foreach (var product in transaction.TransactionProducts)
                 {
-                    product.TransactionId = transaction.Id; // Now transaction.Id is a valid ID after saving
+                    product.TransactionId = transaction.Id; 
                     _transactionCRUD.UpdateTransactionProduct(product);
                 }
                 return NoContent();
@@ -155,15 +172,15 @@ namespace FirmTracker_Server.Controllers
             if (transactions == null)
                 return NotFound();
 
-            // Ustawienie opcji serializatora JSON
+            
             var options = new JsonSerializerOptions
             {
-                ReferenceHandler = ReferenceHandler.Preserve // Obsługa cykli obiektów
+                ReferenceHandler = ReferenceHandler.Preserve 
             };
 
            // var json = JsonSerializer.Serialize(transactions, options);
 
-            // Zwrócenie odpowiedzi z JSON
+            
             return Ok(transactions);
         }
 
