@@ -23,6 +23,7 @@ using System.Text.Json;
 using System.Transactions;
 using FirmTracker_Server.nHibernate.Products;
 using FirmTracker_Server.nHibernate;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace FirmTracker_Server.Controllers
 {
@@ -63,17 +64,18 @@ namespace FirmTracker_Server.Controllers
 
                         if (product.Quantity > availability)
                         {
-                            return BadRequest($"Can't add product {product.ProductID} to transaction. Available: {availability}, Desired: {product.Quantity}");
+                            throw new InvalidOperationException($"Can't add product {product.ProductID} to transaction. Available: {availability}, Desired: {product.Quantity}");
+                            //return BadRequest($"Can't add product {product.ProductID} to transaction. Available: {availability}, Desired: {product.Quantity}");
                         }
                         else
                         {
-                            transaction.TotalPrice += ((product.Quantity * price) * ((1 - (transaction.Discount / 100))));
+                            //transaction.TotalPrice += ((product.Quantity * price) * ((1 - (transaction.Discount / 100))));
                         }
 
                     }
                     else
                     {
-                        transaction.TotalPrice += (price * ((1 - (transaction.Discount / 100))));
+                        //transaction.TotalPrice += (price * ((1 - (transaction.Discount / 100))));
                     }
                 }
 
@@ -90,6 +92,13 @@ namespace FirmTracker_Server.Controllers
               //  session.Flush(); 
 
                 return CreatedAtAction(nameof(GetTransaction), new { id = transaction.Id }, transaction);
+            }
+            catch (InvalidOperationException ioe)
+            { 
+                return BadRequest(new {
+                    Message = ioe.Message,
+                    ErrorCode = "Availability"
+                });
             }
             catch (Exception ex)
             {
@@ -121,7 +130,6 @@ namespace FirmTracker_Server.Controllers
 
             try
             {
-                
                 foreach (var product in transaction.TransactionProducts)
                 {
                     product.TransactionId = transaction.Id; 

@@ -13,6 +13,7 @@ namespace FirmTracker_Server.nHibernate.Transactions
             Map(x => x.PaymentType);
             Map(x => x.Discount);
             Map(x => x.Description);
+            Map(x => x.TotalPrice);
 
             HasMany(x => x.TransactionProducts)
                 .KeyColumn("TransactionId")
