@@ -28,9 +28,11 @@ namespace FirmTracker_Server.nHibernate.Transactions
                         {
                             transaction.TotalPrice += (product.Price) * ((1 - (transaction.Discount / 100)));
                         }
-                        transactionProduct.TransactionId = transaction.Id; 
+                        transactionProduct.TransactionId = transaction.Id;
+
                         session.Save(transactionProduct);
                     }
+                    transaction.TotalPrice = Math.Round(transaction.TotalPrice, 2, MidpointRounding.AwayFromZero);
                     session.Save(transaction);
 
                     // Decrease product quantities based on transaction
@@ -183,8 +185,8 @@ namespace FirmTracker_Server.nHibernate.Transactions
 
                         transactionProduct.TransactionId= transactionToUpdate.Id;
                         session.Save(transactionProduct);
-                        transaction.Commit();
 
+                        transactionToUpdate.TotalPrice = Math.Round(transactionToUpdate.TotalPrice, 2, MidpointRounding.AwayFromZero);
                         session.Update(transactionToUpdate);
                         //var product = session.Get<Product>(transactionProduct.ProductID);
                         if (product.Type != 0)
@@ -192,7 +194,7 @@ namespace FirmTracker_Server.nHibernate.Transactions
                             product.Availability -= transactionProduct.Quantity;
                             session.Update(product);
                         }
-                        
+                        transaction.Commit();
                     }
                     else
                     {
