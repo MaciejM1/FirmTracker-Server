@@ -134,7 +134,7 @@ namespace FirmTracker_Server.Controllers
                 {
                     product.TransactionId = transaction.Id; 
                     decimal price = _productCRUD.GetProductPrice(product.ProductID);
-                    transaction.TotalPrice += ((product.Quantity * price) * ((1 - (transaction.Discount / 100))));
+                    //transaction.TotalPrice += ((product.Quantity * price) * ((1 - (transaction.Discount / 100))));
                 }
 
                 transaction.TotalPrice = Math.Round(transaction.TotalPrice, 2, MidpointRounding.AwayFromZero);

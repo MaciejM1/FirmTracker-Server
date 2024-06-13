@@ -86,9 +86,30 @@ namespace FirmTracker_Server.nHibernate.Transactions
             {
                 try
                 {
+
+                    var oldTransaction = session.Load<Transaction>(transaction.Id);
+                    foreach (var tp in oldTransaction.TransactionProducts)
+                    {
+                        var product = session.Get<Product>(tp.ProductID);
+                        Console.WriteLine($"Product {product.Name} before quantity: {tp.Quantity}");
+                        
+                        if (product.Type != 0)
+                        {
+                            product.Availability += tp.Quantity;
+                            transaction.TotalPrice -= ((tp.Quantity * product.Price) * ((1 - (transaction.Discount / 100))));
+                        }
+                        else
+                        {
+                            transaction.TotalPrice -= (product.Price) * ((1 - (transaction.Discount / 100)));
+                        }
+                        session.Update(product);
+                    }
+                    session.Flush();
+                    session.Clear();
+
                     foreach (var transactionProduct in transaction.TransactionProducts)
                     {
-                        /*var product = session.Get<Product>(transactionProduct.ProductID);
+                        var product = session.Get<Product>(transactionProduct.ProductID);
                         if (product.Type != 0)
                         {
                             transaction.TotalPrice += ((transactionProduct.Quantity * product.Price) * ((1 - (transaction.Discount / 100))));
@@ -96,10 +117,13 @@ namespace FirmTracker_Server.nHibernate.Transactions
                         else
                         {
                             transaction.TotalPrice += (product.Price) * ((1 - (transaction.Discount / 100)));
-                        }*/
+                        }
+
+                        //var product = session.Load<Product>(transactionProduct.ProductID);
+                        Console.WriteLine($"Product {product.Name} after quantity: {transactionProduct.Quantity}");
 
                         transactionProduct.TransactionId = transaction.Id;
-                        session.Update(transactionProduct);
+                        session.SaveOrUpdate(transactionProduct);
                     }
                     session.Update(transaction);
 
@@ -114,7 +138,6 @@ namespace FirmTracker_Server.nHibernate.Transactions
                             session.Update(product);
                         }
                     }
-
                     sessionTransaction.Commit();
                 }
                 catch
