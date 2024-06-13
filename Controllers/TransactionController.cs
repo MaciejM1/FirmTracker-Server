@@ -60,22 +60,13 @@ namespace FirmTracker_Server.Controllers
                     int type = _productCRUD.GetProductType(product.ProductID);
                     if (type == 1)
                     {
-                        int availability = _productCRUD.GetProductAvailability(product.ProductID);
+                        var prod = _productCRUD.GetProduct(product.ProductID);
 
-                        if (product.Quantity > availability)
+                        if (product.Quantity > prod.Availability)
                         {
-                            throw new InvalidOperationException($"Can't add product {product.ProductID} to transaction. Available: {availability}, Desired: {product.Quantity}");
+                            throw new InvalidOperationException($"Can't add product {prod.Name} to transaction. Available: {prod.Availability}, Desired: {product.Quantity}");
                             //return BadRequest($"Can't add product {product.ProductID} to transaction. Available: {availability}, Desired: {product.Quantity}");
                         }
-                        else
-                        {
-                            //transaction.TotalPrice += ((product.Quantity * price) * ((1 - (transaction.Discount / 100))));
-                        }
-
-                    }
-                    else
-                    {
-                        //transaction.TotalPrice += (price * ((1 - (transaction.Discount / 100))));
                     }
                 }
 
@@ -95,10 +86,7 @@ namespace FirmTracker_Server.Controllers
             }
             catch (InvalidOperationException ioe)
             { 
-                return BadRequest(new {
-                    Message = ioe.Message,
-                    ErrorCode = "Availability"
-                });
+                return BadRequest(ioe.Message);
             }
             catch (Exception ex)
             {
@@ -134,10 +122,9 @@ namespace FirmTracker_Server.Controllers
                 {
                     product.TransactionId = transaction.Id; 
                     decimal price = _productCRUD.GetProductPrice(product.ProductID);
-                    //transaction.TotalPrice += ((product.Quantity * price) * ((1 - (transaction.Discount / 100))));
                 }
 
-                transaction.TotalPrice = Math.Round(transaction.TotalPrice, 2, MidpointRounding.AwayFromZero);
+
                 _transactionCRUD.UpdateTransaction(transaction);
 
                

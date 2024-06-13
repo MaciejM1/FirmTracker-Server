@@ -87,7 +87,7 @@ namespace FirmTracker_Server.nHibernate.Transactions
                 try
                 {
 
-                    var oldTransaction = session.Load<Transaction>(transaction.Id);
+                    var oldTransaction = session.Get<Transaction>(transaction.Id);
                     foreach (var tp in oldTransaction.TransactionProducts)
                     {
                         var product = session.Get<Product>(tp.ProductID);
@@ -96,16 +96,13 @@ namespace FirmTracker_Server.nHibernate.Transactions
                         if (product.Type != 0)
                         {
                             product.Availability += tp.Quantity;
-                            transaction.TotalPrice -= ((tp.Quantity * product.Price) * ((1 - (transaction.Discount / 100))));
-                        }
-                        else
-                        {
-                            transaction.TotalPrice -= (product.Price) * ((1 - (transaction.Discount / 100)));
                         }
                         session.Update(product);
                     }
                     session.Flush();
                     session.Clear();
+
+                    transaction.TotalPrice = 0;
 
                     foreach (var transactionProduct in transaction.TransactionProducts)
                     {
@@ -125,6 +122,7 @@ namespace FirmTracker_Server.nHibernate.Transactions
                         transactionProduct.TransactionId = transaction.Id;
                         session.SaveOrUpdate(transactionProduct);
                     }
+                    transaction.TotalPrice = Math.Round(transaction.TotalPrice, 2, MidpointRounding.AwayFromZero);
                     session.Update(transaction);
 
                     // Decrease product quantities based on transaction
@@ -134,8 +132,16 @@ namespace FirmTracker_Server.nHibernate.Transactions
                         var product = session.Get<Product>(transactionProduct.ProductID);
                         if (product.Type != 0)
                         {
-                            product.Availability -= transactionProduct.Quantity;
-                            session.Update(product);
+                            if (transactionProduct.Quantity > product.Availability)
+                            {
+                                throw new InvalidOperationException($"Can't add product {product.Name} to transaction. Available: {product.Availability}, Desired: {transactionProduct.Quantity}");
+                            }
+                            else
+                            {
+                                product.Availability -= transactionProduct.Quantity;
+                                session.Update(product);
+                            }
+
                         }
                     }
                     sessionTransaction.Commit();
@@ -175,6 +181,15 @@ namespace FirmTracker_Server.nHibernate.Transactions
                     var transaction = session.Get<Transaction>(transactionId);
                     if (transaction != null)
                     {
+                        foreach (var transactionProduct in transaction.TransactionProducts)
+                        {
+                            var product = session.Get<Product>(transactionProduct.ProductID);
+                            if (product.Type != 0)
+                            {
+                                product.Availability += transactionProduct.Quantity;
+                                session.Update(product);
+                            }
+                        }
                         session.Delete(transaction);
                         t.Commit();
                     }
