@@ -55,9 +55,16 @@ namespace FirmTracker_Server.Controllers
                 
                 foreach (var product in transaction.TransactionProducts)
                 {
-                    product.TransactionId = transaction.Id; 
-                    decimal price = _productCRUD.GetProductPrice(product.ProductID);
-                    int type = _productCRUD.GetProductType(product.ProductID);
+                    var productByName = _productCRUD.GetProductByName(product.ProductName);
+                    if (productByName == null)
+                    {
+                        throw new InvalidOperationException($"Product with name {product.ProductName} does not exist.");
+                    }
+                    product.ProductID = productByName.Id;
+                    product.TransactionId = transaction.Id;
+
+                    decimal price = productByName.Price;// _productCRUD.GetProductPrice(product.ProductID);
+                    int type = productByName.Type;//_productCRUD.GetProductType(product.ProductID);
                     if (type == 1)
                     {
                         var prod = _productCRUD.GetProduct(product.ProductID);
@@ -120,8 +127,16 @@ namespace FirmTracker_Server.Controllers
             {
                 foreach (var product in transaction.TransactionProducts)
                 {
-                    product.TransactionId = transaction.Id; 
-                    decimal price = _productCRUD.GetProductPrice(product.ProductID);
+                    var productByName = _productCRUD.GetProductByName(product.ProductName);
+                    if (productByName == null)
+                    {
+                        throw new InvalidOperationException($"Product with name {product.ProductName} does not exist.");
+                    }
+                    product.ProductID = productByName.Id;
+                    product.TransactionId = transaction.Id;
+
+                    decimal price = productByName.Price;// _productCRUD.GetProductPrice(product.ProductID);
+                    int type = productByName.Type;//_productCRUD.GetProductType(product.ProductID);
                 }
 
 

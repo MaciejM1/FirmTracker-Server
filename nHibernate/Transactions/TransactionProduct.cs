@@ -8,7 +8,8 @@ namespace FirmTracker_Server.nHibernate.Transactions
     {
         public virtual int Id { get; set; }
         public virtual int TransactionId { get;  set; }
-        public virtual int  ProductID { get; set; }
+        public virtual int ProductID { get; set; }
+        public virtual string ProductName { get; set; }
         public virtual int Quantity { get; set; }
     }
 }
