@@ -58,7 +58,7 @@ namespace FirmTracker_Server.Controllers
                     var productByName = _productCRUD.GetProductByName(product.ProductName);
                     if (productByName == null)
                     {
-                        throw new InvalidOperationException($"Product with name {product.ProductName} does not exist.");
+                        throw new InvalidOperationException($"Produkt o nazwie {product.ProductName} nie istnieje.");
                     }
                     product.ProductID = productByName.Id;
                     product.TransactionId = transaction.Id;
@@ -71,7 +71,7 @@ namespace FirmTracker_Server.Controllers
 
                         if (product.Quantity > prod.Availability)
                         {
-                            throw new InvalidOperationException($"Can't add product {prod.Name} to transaction. Available: {prod.Availability}, Desired: {product.Quantity}");
+                            throw new InvalidOperationException($"Nie można dodać {prod.Name} do transakcji. Dostępność: {prod.Availability}, Zażądano: {product.Quantity}");
                             //return BadRequest($"Can't add product {product.ProductID} to transaction. Available: {availability}, Desired: {product.Quantity}");
                         }
                     }
@@ -121,7 +121,7 @@ namespace FirmTracker_Server.Controllers
         public IActionResult UpdateTransaction(int id, [FromBody] nHibernate.Transactions.Transaction transaction)
         {
             if (id != transaction.Id)
-                return BadRequest("Transaction ID mismatch");
+                return BadRequest("ID transakcji nie zgadza się.");
 
             try
             {
@@ -130,7 +130,7 @@ namespace FirmTracker_Server.Controllers
                     var productByName = _productCRUD.GetProductByName(product.ProductName);
                     if (productByName == null)
                     {
-                        throw new InvalidOperationException($"Product with name {product.ProductName} does not exist.");
+                        throw new InvalidOperationException($"Produkt o nazwie {product.ProductName} nie istnieje.");
                     }
                     product.ProductID = productByName.Id;
                     product.TransactionId = transaction.Id;

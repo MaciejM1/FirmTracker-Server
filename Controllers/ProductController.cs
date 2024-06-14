@@ -41,11 +41,11 @@ namespace FirmTracker_Server.Controllers
         {
             if (product.Type != 0 && product.Type != 1)
             {
-                return BadRequest("Product type must be set to 0 or 1");
+                return BadRequest("Kategoria produktu musi być ustawiona na 0 lub 1.");
             }
             if (product.Type == 0 && product.Availability != 0)
             {
-                return BadRequest("Services availability must be set to 0");
+                return BadRequest("Dostępność usługi musi być ustawiona na 0.");
             }
             try
             {
@@ -88,14 +88,14 @@ namespace FirmTracker_Server.Controllers
         public IActionResult UpdateProduct(int id, [FromBody] Product product)
         {
             if (id != product.Id)
-                return BadRequest("Product ID mismatch");
+                return BadRequest("ID produktu nie zgadza się.");
             if (product.Type != 0 && product.Type != 1)
             {
-                return BadRequest("Product type must be set to 0 or 1");
+                return BadRequest("Kategoria produktu musi być ustawiona na 0 lub 1.");
             }
             if (product.Type == 0 && product.Availability != 0)
             {
-                return BadRequest("Services availability must be set to 0");
+                return BadRequest("Dostępność usługi musi być ustawiona na 0.");
             }
 
             try
@@ -149,7 +149,7 @@ namespace FirmTracker_Server.Controllers
                 var product = _productCrud.GetProduct(order.ProductId);
                 if (product == null)
                 {
-                    return BadRequest($"Product with ID {order.ProductId} not found.");
+                    return BadRequest($"Nie znaleziono produktu o ID {order.ProductId}.");
                 }
                 totalPrice += product.Price * order.Quantity;
             }

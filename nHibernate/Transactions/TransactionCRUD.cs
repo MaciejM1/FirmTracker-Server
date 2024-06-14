@@ -91,7 +91,6 @@ namespace FirmTracker_Server.nHibernate.Transactions
                     foreach (var tp in oldTransaction.TransactionProducts)
                     {
                         var product = session.Get<Product>(tp.ProductID);
-                        Console.WriteLine($"Product {product.Name} before quantity: {tp.Quantity}");
                         
                         if (product.Type != 0)
                         {
@@ -116,9 +115,6 @@ namespace FirmTracker_Server.nHibernate.Transactions
                             transaction.TotalPrice += (product.Price) * ((1 - (transaction.Discount / 100)));
                         }
 
-                        //var product = session.Load<Product>(transactionProduct.ProductID);
-                        Console.WriteLine($"Product {product.Name} after quantity: {transactionProduct.Quantity}");
-
                         transactionProduct.TransactionId = transaction.Id;
                         session.SaveOrUpdate(transactionProduct);
                     }
@@ -134,7 +130,7 @@ namespace FirmTracker_Server.nHibernate.Transactions
                         {
                             if (transactionProduct.Quantity > product.Availability)
                             {
-                                throw new InvalidOperationException($"Can't add product {product.Name} to transaction. Available: {product.Availability}, Desired: {transactionProduct.Quantity}");
+                                throw new InvalidOperationException($"Nie można dodać {product.Name} do transakcji. Dostępność: {product.Availability}, Zażądano: {transactionProduct.Quantity}");
                             }
                             else
                             {

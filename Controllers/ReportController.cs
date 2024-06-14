@@ -51,7 +51,7 @@ namespace FirmTracker_Server.Controllers
                 var toDate = dateRange.ToDate;
                 if (fromDate >= toDate)
                 {
-                    return BadRequest();
+                    return BadRequest("Nieprawidłowy zakres dat.");
                 }
                 using (var session = SessionFactory.OpenSession())
                 {
@@ -191,7 +191,7 @@ namespace FirmTracker_Server.Controllers
                     var toDate = dateRange.ToDate;
                     if (fromDate >= toDate)
                     {
-                        return BadRequest();
+                        return BadRequest("Nieprawidłowy zakres dat.");
                     }
                     var transactions = session.Query<nHibernate.Transactions.Transaction>()
                 .Where(t => t.Date >= fromDate && t.Date <= toDate)
