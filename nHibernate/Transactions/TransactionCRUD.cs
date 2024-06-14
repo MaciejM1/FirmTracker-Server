@@ -19,10 +19,20 @@ namespace FirmTracker_Server.nHibernate.Transactions
                 {
                     foreach (var transactionProduct in transaction.TransactionProducts)
                     {
-                        
-                        transactionProduct.TransactionId = transaction.Id; 
+                        var product = session.Get<Product>(transactionProduct.ProductID);
+                        if (product.Type != 0)
+                        {
+                            transaction.TotalPrice += ((transactionProduct.Quantity * product.Price) * ((1 - (transaction.Discount / 100))));
+                        }
+                        else
+                        {
+                            transaction.TotalPrice += (product.Price) * ((1 - (transaction.Discount / 100)));
+                        }
+                        transactionProduct.TransactionId = transaction.Id;
+
                         session.Save(transactionProduct);
                     }
+                    transaction.TotalPrice = Math.Round(transaction.TotalPrice, 2, MidpointRounding.AwayFromZero);
                     session.Save(transaction);
 
                     // Decrease product quantities based on transaction
@@ -76,12 +86,39 @@ namespace FirmTracker_Server.nHibernate.Transactions
             {
                 try
                 {
+
+                    var oldTransaction = session.Get<Transaction>(transaction.Id);
+                    foreach (var tp in oldTransaction.TransactionProducts)
+                    {
+                        var product = session.Get<Product>(tp.ProductID);
+                        
+                        if (product.Type != 0)
+                        {
+                            product.Availability += tp.Quantity;
+                        }
+                        session.Update(product);
+                    }
+                    session.Flush();
+                    session.Clear();
+
+                    transaction.TotalPrice = 0;
+
                     foreach (var transactionProduct in transaction.TransactionProducts)
                     {
+                        var product = session.Get<Product>(transactionProduct.ProductID);
+                        if (product.Type != 0)
+                        {
+                            transaction.TotalPrice += ((transactionProduct.Quantity * product.Price) * ((1 - (transaction.Discount / 100))));
+                        }
+                        else
+                        {
+                            transaction.TotalPrice += (product.Price) * ((1 - (transaction.Discount / 100)));
+                        }
 
                         transactionProduct.TransactionId = transaction.Id;
-                        session.Update(transactionProduct);
+                        session.SaveOrUpdate(transactionProduct);
                     }
+                    transaction.TotalPrice = Math.Round(transaction.TotalPrice, 2, MidpointRounding.AwayFromZero);
                     session.Update(transaction);
 
                     // Decrease product quantities based on transaction
@@ -91,11 +128,18 @@ namespace FirmTracker_Server.nHibernate.Transactions
                         var product = session.Get<Product>(transactionProduct.ProductID);
                         if (product.Type != 0)
                         {
-                            product.Availability -= transactionProduct.Quantity;
-                            session.Update(product);
+                            if (transactionProduct.Quantity > product.Availability)
+                            {
+                                throw new InvalidOperationException($"Nie można dodać {product.Name} do transakcji. Dostępność: {product.Availability}, Zażądano: {transactionProduct.Quantity}");
+                            }
+                            else
+                            {
+                                product.Availability -= transactionProduct.Quantity;
+                                session.Update(product);
+                            }
+
                         }
                     }
-
                     sessionTransaction.Commit();
                 }
                 catch
@@ -133,6 +177,15 @@ namespace FirmTracker_Server.nHibernate.Transactions
                     var transaction = session.Get<Transaction>(transactionId);
                     if (transaction != null)
                     {
+                        foreach (var transactionProduct in transaction.TransactionProducts)
+                        {
+                            var product = session.Get<Product>(transactionProduct.ProductID);
+                            if (product.Type != 0)
+                            {
+                                product.Availability += transactionProduct.Quantity;
+                                session.Update(product);
+                            }
+                        }
                         session.Delete(transaction);
                         t.Commit();
                     }
@@ -154,17 +207,28 @@ namespace FirmTracker_Server.nHibernate.Transactions
                     var transactionToUpdate = session.Get<Transaction>(transactionId);
                     if (transactionToUpdate != null)
                     {
+                        var product = session.Get<Product>(transactionProduct.ProductID);
+                        if (product.Type != 0)
+                        {
+                            transactionToUpdate.TotalPrice += ((transactionProduct.Quantity * product.Price) * ((1 - (transactionToUpdate.Discount / 100))));
+                        }
+                        else
+                        {
+                            transactionToUpdate.TotalPrice += (product.Price) * ((1 - (transactionToUpdate.Discount / 100)));
+                        }
+
                         transactionProduct.TransactionId= transactionToUpdate.Id;
                         session.Save(transactionProduct);
-                        transaction.Commit();
-                     
-                        var product = session.Get<Product>(transactionProduct.ProductID);
+
+                        transactionToUpdate.TotalPrice = Math.Round(transactionToUpdate.TotalPrice, 2, MidpointRounding.AwayFromZero);
+                        session.Update(transactionToUpdate);
+                        //var product = session.Get<Product>(transactionProduct.ProductID);
                         if (product.Type != 0)
                         {
                             product.Availability -= transactionProduct.Quantity;
                             session.Update(product);
                         }
-                        
+                        transaction.Commit();
                     }
                     else
                     {

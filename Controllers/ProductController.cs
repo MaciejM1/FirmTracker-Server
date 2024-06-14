@@ -1,4 +1,21 @@
-﻿using FirmTracker_Server.nHibernate.Products;
+﻿/*
+ * This file is part of FirmTracker - Server.
+ *
+ * FirmTracker - Server is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * FirmTracker - Server is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with FirmTracker - Server. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+using FirmTracker_Server.nHibernate.Products;
 using Microsoft.AspNetCore.Mvc;
 namespace FirmTracker_Server.Controllers
 {
@@ -22,6 +39,14 @@ namespace FirmTracker_Server.Controllers
         [ProducesResponseType(400)] // Bad Request
         public IActionResult CreateProduct([FromBody] Product product)
         {
+            if (product.Type != 0 && product.Type != 1)
+            {
+                return BadRequest("Kategoria produktu musi być ustawiona na 0 lub 1.");
+            }
+            if (product.Type == 0 && product.Availability != 0)
+            {
+                return BadRequest("Dostępność usługi musi być ustawiona na 0.");
+            }
             try
             {
                 _productCrud.AddProduct(product);
@@ -45,6 +70,17 @@ namespace FirmTracker_Server.Controllers
             return Ok(product);
         }
 
+        [HttpGet("name/{name}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        public IActionResult GetProductByName(string name)
+        {
+            var product = _productCrud.GetProductByName(name);
+            if (product ==null)
+                return NotFound();
+            return Ok(product);
+        }
+
         // PUT: api/Products/5
         [HttpPut("{id}")]
         [ProducesResponseType(200)] // Created
@@ -52,7 +88,15 @@ namespace FirmTracker_Server.Controllers
         public IActionResult UpdateProduct(int id, [FromBody] Product product)
         {
             if (id != product.Id)
-                return BadRequest("Product ID mismatch");
+                return BadRequest("ID produktu nie zgadza się.");
+            if (product.Type != 0 && product.Type != 1)
+            {
+                return BadRequest("Kategoria produktu musi być ustawiona na 0 lub 1.");
+            }
+            if (product.Type == 0 && product.Availability != 0)
+            {
+                return BadRequest("Dostępność usługi musi być ustawiona na 0.");
+            }
 
             try
             {
@@ -105,7 +149,7 @@ namespace FirmTracker_Server.Controllers
                 var product = _productCrud.GetProduct(order.ProductId);
                 if (product == null)
                 {
-                    return BadRequest($"Product with ID {order.ProductId} not found.");
+                    return BadRequest($"Nie znaleziono produktu o ID {order.ProductId}.");
                 }
                 totalPrice += product.Price * order.Quantity;
             }

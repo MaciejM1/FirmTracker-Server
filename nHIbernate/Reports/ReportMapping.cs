@@ -16,19 +16,31 @@
  */
 
 using FluentNHibernate.Mapping;
-
-namespace FirmTracker_Server.nHibernate.Expenses
+namespace FirmTracker_Server.nHibernate.Reports
 {
-    public class ExpenseMapping : ClassMap<Expense>
+    public class ReportMapping : ClassMap<Report>
     {
-        public ExpenseMapping()
+        public ReportMapping()
         {
-            Table("Expenses");
+            Table("Reports");
             Id(x => x.Id).GeneratedBy.Identity();
-            Map(x => x.Date);
-            Map(x => x.Value);
-            Map(x => x.Description);
+            Map(x => x.FromDate);
+            Map(x => x.ToDate);
+            Map(x => x.TotalIncome);
+            Map(x => x.TotalExpenses);
+            Map(x => x.TotalBalance);
+
+            /*HasMany(x => x.ReportTransactions)
+            .KeyColumn("ReportId")
+                .Cascade.AllDeleteOrphan()
+                .Inverse();
+
+            HasMany(x => x.ReportExpenses)
+            .KeyColumn("ReportId")
+                .Cascade.AllDeleteOrphan()
+                .Inverse();*/
 
         }
+
     }
 }

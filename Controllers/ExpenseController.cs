@@ -1,4 +1,21 @@
-﻿using FirmTracker_Server.nHibernate.Expenses;
+﻿/*
+ * This file is part of FirmTracker - Server.
+ *
+ * FirmTracker - Server is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * FirmTracker - Server is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with FirmTracker - Server. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+using FirmTracker_Server.nHibernate.Expenses;
 using Microsoft.AspNetCore.Mvc;
 namespace FirmTracker_Server.Controllers
 {
@@ -30,7 +47,7 @@ namespace FirmTracker_Server.Controllers
         // GET: api/Expenses
         [HttpGet("{id}")]
         [ProducesResponseType(200)] // Created
-        [ProducesResponseType(400)] // Bad Request
+        [ProducesResponseType(404)] // Bad Request
         public IActionResult GetExpense(int id)
         {
             var expense = _expenseCrud.GetExpense(id);
@@ -43,8 +60,8 @@ namespace FirmTracker_Server.Controllers
 
         //PUT: api/Expenses
         [HttpPut("{id}")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(200)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
         public IActionResult UpdateExpense(int id, [FromBody] Expense expense)
         {
             if (id != expense.Id)
@@ -63,8 +80,8 @@ namespace FirmTracker_Server.Controllers
         }
 
         [HttpDelete("{id}")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
         public IActionResult DeleteExpense(int id)
         {
             try

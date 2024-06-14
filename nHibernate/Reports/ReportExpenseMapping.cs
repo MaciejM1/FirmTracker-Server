@@ -15,17 +15,18 @@
  * along with FirmTracker - Server. If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System.Text.Json.Serialization;
+using FluentNHibernate.Mapping;
 
-namespace FirmTracker_Server.nHibernate.Products
+namespace FirmTracker_Server.nHibernate.Reports
 {
-    public class Product
+    public class ReportExpenseMapping : ClassMap<ReportExpense>
     {
-        public virtual int Id { get; set; }
-        public virtual string Name { get; set; }
-        public virtual string Description { get; set; }
-        public virtual decimal Price { get; set; }
-        public virtual int Type { get; set; } // 0 for service, 1 for goods
-        public virtual int Availability { get; set; }
+        public ReportExpenseMapping()
+        {
+            Table("ReportExpenses");
+            CompositeId()
+                .KeyReference(x => x.Report, "ReportId")
+                .KeyReference(x => x.Expense, "ExpenseId");
+        }
     }
 }

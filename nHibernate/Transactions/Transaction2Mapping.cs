@@ -13,11 +13,13 @@ namespace FirmTracker_Server.nHibernate.Transactions
             Map(x => x.PaymentType);
             Map(x => x.Discount);
             Map(x => x.Description);
+            Map(x => x.TotalPrice).Precision(18).Scale(2);
 
             HasMany(x => x.TransactionProducts)
                 .KeyColumn("TransactionId")
                 .Cascade.AllDeleteOrphan()
                 .Inverse(); // Ustawienie Inverse() wskazuje, że to `TransactionProduct` jest właścicielem relacji
+
         }
     }
 }

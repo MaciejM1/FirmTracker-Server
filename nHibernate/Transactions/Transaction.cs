@@ -1,4 +1,5 @@
 ﻿using FirmTracker_Server.nHibernate.Products;
+using FirmTracker_Server.nHibernate.Reports;
 using System;
 using System.Collections.Generic;
 using System.Linq;
