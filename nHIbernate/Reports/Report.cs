@@ -18,13 +18,16 @@
 using FirmTracker_Server.nHibernate.Expenses;
 using FirmTracker_Server.nHibernate.Transactions;
 using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 
 namespace FirmTracker_Server.nHibernate.Reports
 {
     public class Report
     {
         public virtual int Id { get; set; }
+        [DataType(DataType.DateTime)]
         public virtual DateTime FromDate { get; set; }
+        [DataType(DataType.DateTime)]
         public virtual DateTime ToDate { get; set; }
         public virtual decimal TotalIncome { get; set; }
         public virtual decimal TotalExpenses { get; set; }

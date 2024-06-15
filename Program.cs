@@ -22,6 +22,8 @@ using NHibernate.Driver;
 using FirmTracker_Server.Controllers;
 using FirmTracker_Server.nHibernate.Products;
 using FirmTracker_Server.nHibernate;
+using FirmTracker_Server.Utilities.Converters;
+using FirmTracker_Server.Utilities.Swagger;
 
 namespace FirmTracker_Server
 {
@@ -60,10 +62,18 @@ namespace FirmTracker_Server
                         .AllowAnyHeader()
                         .AllowAnyMethod());
             });
-            builder.Services.AddControllers();
+            builder.Services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.Converters.Add(new DateTimeConverter());
+                });
+                ;
 
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SchemaFilter<SwaggerDateTimeSchemaFilter>();
+            });
 
             var app = builder.Build();
             var configSwagger = new ConfigurationBuilder()
