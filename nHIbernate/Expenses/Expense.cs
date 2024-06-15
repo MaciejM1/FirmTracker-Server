@@ -16,12 +16,14 @@
  */
 
 using FirmTracker_Server.nHibernate.Reports;
+using System.ComponentModel.DataAnnotations;
 
 namespace FirmTracker_Server.nHibernate.Expenses
 {
     public class Expense
     {
         public virtual int Id { get; set; }
+        [DataType(DataType.DateTime)]
         public virtual DateTime Date { get; set; }
         public virtual decimal Value { get; set; }
         public virtual string Description { get; set; }

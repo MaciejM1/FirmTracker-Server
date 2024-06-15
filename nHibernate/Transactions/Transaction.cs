@@ -2,6 +2,7 @@
 using FirmTracker_Server.nHibernate.Reports;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace FirmTracker_Server.nHibernate.Transactions
@@ -9,6 +10,7 @@ namespace FirmTracker_Server.nHibernate.Transactions
     public class Transaction
     {
         public virtual int Id { get; set; }
+        [DataType(DataType.DateTime)]
         public virtual DateTime Date { get; set; }
         public virtual int EmployeeId { get; set; }
         public virtual IList<TransactionProduct> TransactionProducts { get; set; } = new List<TransactionProduct>();
