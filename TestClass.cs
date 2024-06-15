@@ -39,25 +39,18 @@ namespace FirmTracker_Server
         }
         public void AddTestProduct()
         {
-           // SessionFactory.Init(ConnectionString);
+            // SessionFactory.Init(ConnectionString);
 
-            var product = new nHibernate.Products.Product
-            {
-                Name = "Produkt test 1",
-                Description = "testowy produkt",
-                Price = 11.50m,
-                Type = 1, 
-                Availability = 5
-            };
+
             var product2 = new nHibernate.Products.Product
             {
-                Name = "Usluga 1",
-                Description = "testowa usluga",
-                Price = 1120.00m,
+                Name = "Dostawa",
+                Description = "usługa dostawy",
+                Price = 7.50m,
                 Type = 0,
                 Availability = 0
             };
-            
+         
             var products = new List<Product>
             {
                 CreateProduct("Tarta_truskawka", "produkt", 31.99m, 1, 10),
@@ -96,10 +89,26 @@ namespace FirmTracker_Server
                 CreateProduct("Placek_jogurt", "produkt", 23.00m, 1, 13),
                 CreateProduct("Placek_śliwka", "produkt", 22.00m, 1, 14),
                 CreateProduct("Placek_maślany", "produkt", 18.00m, 1,11),
+                CreateProduct("Keks", "produkt", 22.00m, 1,11),
+                CreateProduct("Babka_drożdżowa", "produkt", 16.00m, 1,11),
+                CreateProduct("Pączek_pistacja", "produkt", 8.00m, 1,11),
+                CreateProduct("Pączek_marmolada", "produkt", 3.00m, 1,11),
+                CreateProduct("Pączek_nutella", "produkt", 4.50m, 1,11),
+                CreateProduct("Pączek_rafaello", "produkt", 4.50m, 1,11),
+                CreateProduct("Pączek_róża", "produkt", 4.00m, 1,11),
+                CreateProduct("Ekler", "produkt", 3.00m, 1,11),
+                CreateProduct("Ekler_słony_karmel", "produkt", 5.00m, 1,11),
+                CreateProduct("Ptyś", "produkt", 4.00m, 1,11),
+                CreateProduct("Drożdżówka_ser", "produkt", 4.00m, 1,11),
+                CreateProduct("Drożdżówka_rabarbar", "produkt", 5.00m, 1,11),
+                CreateProduct("Drożdżówka_żurawina", "produkt", 5.00m, 1,11),
+                CreateProduct("Drożdżówka_kruszonka", "produkt", 4.00m, 1,11),
+                CreateProduct("Drożdżówka_budyń", "produkt", 5.00m, 1,11),
+                CreateProduct("Jagodzianka", "produkt", 6.00m, 1,11),
 
 
               };
-         
+
             var transaction1 = new Transaction
             {
                 Date = DateTime.Now.AddDays(-2),
@@ -146,10 +155,11 @@ namespace FirmTracker_Server
                 Description = "naprawa pieca - 25.05.2024"
             };
             var expense3 = new Expense
-            { Date = DateTime.Now,
-            Value = 1800.00m,
-            Description = "zakup składników "
-            
+            {
+                Date = DateTime.Now,
+                Value = 1800.00m,
+                Description = "zakup składników "
+
             };
 
             try
@@ -157,7 +167,7 @@ namespace FirmTracker_Server
                 FirmTracker_Server.nHibernate.Products.ProductCRUD productCrud = new ProductCRUD();
                 FirmTracker_Server.nHibernate.Transactions.TransactionCRUD transactionCrud = new nHibernate.Transactions.TransactionCRUD();
                 ExpenseCRUD expenseCrud = new ExpenseCRUD();
-                productCrud.AddProduct(product);
+               // productCrud.AddProduct(product);
                 productCrud.AddProduct(product2);
                // productCrud.AddProduct(product3);
                 foreach(var clientProduct in products)
@@ -170,11 +180,12 @@ namespace FirmTracker_Server
                 transactionCrud.AddTransaction(transaction4);
                 expenseCrud.AddExpense(expense1);
                 expenseCrud.AddExpense(expense2);
+                expenseCrud.AddExpense(expense3);
 
                 List<TransactionProduct> testTransactionProducts = new List<TransactionProduct>  {
                     new TransactionProduct { ProductID =17, Quantity = 10 },
                     new TransactionProduct { ProductID = 14, Quantity = 1 },
-                    new TransactionProduct { ProductID = 1, Quantity = 2 },
+                    new TransactionProduct { ProductID = 1, Quantity = 0 },
                 };
                 foreach (var transactionProduct in testTransactionProducts)
                 {
@@ -195,7 +206,7 @@ namespace FirmTracker_Server
 
                 List<TransactionProduct> testTransactionProducts3 = new List<TransactionProduct>
                 {
-                    new TransactionProduct { ProductID = 3, Quantity=12},
+                    new TransactionProduct { ProductID = 3, Quantity=9},
                     new TransactionProduct { ProductID = 2, Quantity=1}
                 };
                 foreach (var transactionProduct in testTransactionProducts3)
