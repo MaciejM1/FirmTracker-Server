@@ -16,6 +16,7 @@
  */
 
 using FirmTracker_Server.nHibernate.Expenses;
+using FirmTracker_Server.nHibernate.Products;
 using Microsoft.AspNetCore.Mvc;
 namespace FirmTracker_Server.Controllers
 {
@@ -33,8 +34,12 @@ namespace FirmTracker_Server.Controllers
         [HttpPost]
         [ProducesResponseType(201)] // Created
         [ProducesResponseType(400)] // Bad Request
-        public IActionResult CreateExpense([FromBody] Expense expense) { 
-        try
+        public IActionResult CreateExpense([FromBody] Expense expense) {
+            if (expense.Value<=0)
+            {
+                throw new InvalidOperationException("Wydatek nie może posiadać kwoty mniejszej lub równej 0.");
+            }
+            try
             {
                 _expenseCrud.AddExpense(expense);
                 return CreatedAtAction("GetExpense", new { id = expense.Id }, expense);
@@ -66,7 +71,11 @@ namespace FirmTracker_Server.Controllers
         {
             if (id != expense.Id)
             {
-                return BadRequest("Expense ID mismatch");
+                return BadRequest("Nieprawidłowe ID wydatku");
+            }
+            if (expense.Value <= 0)
+            {
+                throw new InvalidOperationException("Wydatek nie może posiadać kwoty mniejszej lub równej 0.");
             }
             try
             {

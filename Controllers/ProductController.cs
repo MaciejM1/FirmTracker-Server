@@ -17,6 +17,8 @@
 
 using FirmTracker_Server.nHibernate.Products;
 using Microsoft.AspNetCore.Mvc;
+using System;
+
 namespace FirmTracker_Server.Controllers
 {
     [Route("api/[controller]")]
@@ -41,11 +43,18 @@ namespace FirmTracker_Server.Controllers
         {
             if (product.Type != 0 && product.Type != 1)
             {
-                return BadRequest("Kategoria produktu musi być ustawiona na 0 lub 1.");
+                throw new InvalidOperationException("Kategoria produktu musi być ustawiona na 0 lub 1.");
             }
             if (product.Type == 0 && product.Availability != 0)
             {
-                return BadRequest("Dostępność usługi musi być ustawiona na 0.");
+                throw new InvalidOperationException("Dostępność usługi musi być ustawiona na 0.");
+            }
+            if(product.Type ==1 && product.Availability < 0) {
+                throw new InvalidOperationException("Dostępność towaru nie może być ujemna.");
+            }
+            if (product.Price < 0)
+            {
+                throw new InvalidOperationException("Produkt nie może posiadać ujemnej ceny.");
             }
             try
             {
@@ -88,16 +97,23 @@ namespace FirmTracker_Server.Controllers
         public IActionResult UpdateProduct(int id, [FromBody] Product product)
         {
             if (id != product.Id)
-                return BadRequest("ID produktu nie zgadza się.");
+                throw new InvalidOperationException("ID produktu nie zgadza się.");
             if (product.Type != 0 && product.Type != 1)
             {
-                return BadRequest("Kategoria produktu musi być ustawiona na 0 lub 1.");
+                throw new InvalidOperationException("Kategoria produktu musi być ustawiona na 0 lub 1.");
             }
             if (product.Type == 0 && product.Availability != 0)
             {
-                return BadRequest("Dostępność usługi musi być ustawiona na 0.");
+                throw new InvalidOperationException("Dostępność usługi musi być ustawiona na 0.");
             }
-
+            if (product.Type == 1 && product.Availability < 0)
+            {
+                throw new InvalidOperationException("Dostępność towaru nie może być ujemna.");
+            }
+            if (product.Price < 0)
+            {
+                throw new InvalidOperationException("Produkt nie może posiadać ujemnej ceny.");
+            }
             try
             {
                 _productCrud.UpdateProduct(product);
