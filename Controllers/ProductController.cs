@@ -148,6 +148,10 @@ namespace FirmTracker_Server.Controllers
                 _productCrud.DeleteProduct(id);
                 return NoContent();
             }
+            catch (InvalidOperationException ioe)
+            {
+                return BadRequest($"{ioe.Message}");
+            }
             catch (System.Exception ex)
             {
                 return NotFound(ex.Message);

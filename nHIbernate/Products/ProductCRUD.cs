@@ -22,6 +22,9 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.AspNetCore.Http.HttpResults;
 using System.Security.Cryptography.X509Certificates;
+using FirmTracker_Server.nHibernate.Reports;
+using NHibernate.Criterion;
+using FirmTracker_Server.nHibernate.Transactions;
 
 namespace FirmTracker_Server.nHibernate.Products
 {
@@ -129,6 +132,16 @@ namespace FirmTracker_Server.nHibernate.Products
                     var product = session.Get<Product>(productId);
                     if (product != null)
                     {
+
+                        var criteria = session.CreateCriteria<TransactionProduct>();
+                        criteria.Add(Restrictions.Eq("ProductID", productId));
+                        var transactionProducts = criteria.List<TransactionProduct>();
+
+                        if (transactionProducts.Any())
+                        {
+                            throw new InvalidOperationException("Nie można usunąć produktu. Produkt jest ujęty w co najmniej jednej transakcji.");
+                        }
+
                         session.Delete(product);
                         transaction.Commit();
                     }

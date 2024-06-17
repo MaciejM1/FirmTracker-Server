@@ -167,6 +167,10 @@ namespace FirmTracker_Server.Controllers
                 _transactionCRUD.DeleteTransaction(id);
                 return NoContent();
             }
+            catch (InvalidOperationException ioe)
+            {
+                return BadRequest($"{ioe.Message}");
+            }
             catch (Exception ex)
             {
                 return NotFound(ex.Message);

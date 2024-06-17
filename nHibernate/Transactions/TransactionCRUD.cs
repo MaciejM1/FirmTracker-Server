@@ -1,5 +1,7 @@
 ﻿using FirmTracker_Server.nHibernate.Products;
+using FirmTracker_Server.nHibernate.Reports;
 using NHibernate;
+using NHibernate.Criterion;
 using NHibernate.Linq;
 using System;
 using System.Collections.Generic;
@@ -177,6 +179,15 @@ namespace FirmTracker_Server.nHibernate.Transactions
                     var transaction = session.Get<Transaction>(transactionId);
                     if (transaction != null)
                     {
+                        var criteria = session.CreateCriteria<ReportTransaction>();
+                        criteria.Add(Restrictions.Eq("Transaction.Id", transactionId));
+                        var reportTransactions = criteria.List<ReportTransaction>();
+
+                        if (reportTransactions.Any())
+                        {
+                            throw new InvalidOperationException("Nie można usunąć transakcji. Transakcja jest ujęta w co najmniej jednym z raportów.");
+                        }
+
                         foreach (var transactionProduct in transaction.TransactionProducts)
                         {
                             var product = session.Get<Product>(transactionProduct.ProductID);
