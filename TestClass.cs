@@ -54,7 +54,7 @@ namespace FirmTracker_Server
             var products = new List<Product>
             {
                 CreateProduct("Tarta_truskawka", "produkt", 31.99m, 1, 10),
-                CreateProduct("Tarta_czekolada", "produkt", 30.99m, 1, 8),
+                CreateProduct("Tarta_czekolada", "produkt", 30.99m, 1, 10),
                 CreateProduct("Tarta_agrest", "produkt", 32.90m, 1, 8),
                 CreateProduct("Tarta_pistacja", "produkt", 35.99m, 1, 12),
                 CreateProduct("Tarta_karmel", "produkt", 32.00m, 1, 12),

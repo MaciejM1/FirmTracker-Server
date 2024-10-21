@@ -16,6 +16,7 @@
  */
 
 using FirmTracker_Server.nHibernate.Expenses;
+using FirmTracker_Server.nHibernate.Products;
 using Microsoft.AspNetCore.Mvc;
 namespace FirmTracker_Server.Controllers
 {
@@ -33,15 +34,25 @@ namespace FirmTracker_Server.Controllers
         [HttpPost]
         [ProducesResponseType(201)] // Created
         [ProducesResponseType(400)] // Bad Request
-        public IActionResult CreateExpense([FromBody] Expense expense) { 
-        try
+        public IActionResult CreateExpense([FromBody] Expense expense) {
+            try
             {
+                if (expense.Value <= 0)
+                {
+                    throw new InvalidOperationException("Wydatek nie może posiadać kwoty mniejszej lub równej 0.");
+                }
+
                 _expenseCrud.AddExpense(expense);
                 return CreatedAtAction("GetExpense", new { id = expense.Id }, expense);
             }
-        catch (System.Exception ex) {
+            catch (InvalidOperationException ioe)
+            {
+                return BadRequest(ioe.Message);
+            }
+            catch (Exception ex)
+            {
                 return BadRequest(ex.Message);
-                    }
+            }
         }
 
         // GET: api/Expenses
@@ -64,16 +75,26 @@ namespace FirmTracker_Server.Controllers
         [ProducesResponseType(400)]
         public IActionResult UpdateExpense(int id, [FromBody] Expense expense)
         {
-            if (id != expense.Id)
-            {
-                return BadRequest("Expense ID mismatch");
-            }
             try
             {
+                if (id != expense.Id)
+                {
+                    return BadRequest("Nieprawidłowe ID wydatku");
+                }
+                if (expense.Value <= 0)
+                {
+                    throw new InvalidOperationException("Wydatek nie może posiadać kwoty mniejszej lub równej 0.");
+                }
+
+
                 _expenseCrud.UpdateExpense(expense);
                 return NoContent();
             }
-            catch (System.Exception ex)
+            catch (InvalidOperationException ioe)
+            {
+                return BadRequest(ioe.Message);
+            }
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -88,6 +109,10 @@ namespace FirmTracker_Server.Controllers
             {
                 _expenseCrud.DeleteExpense(id);
                 return NoContent();
+            }
+            catch (InvalidOperationException ioe)
+            {
+                return BadRequest($"{ioe.Message}");
             }
             catch (System.Exception ex)
             {

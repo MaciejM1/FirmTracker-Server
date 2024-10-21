@@ -17,6 +17,8 @@
 
 using FirmTracker_Server.nHibernate.Products;
 using Microsoft.AspNetCore.Mvc;
+using System;
+
 namespace FirmTracker_Server.Controllers
 {
     [Route("api/[controller]")]
@@ -39,20 +41,33 @@ namespace FirmTracker_Server.Controllers
         [ProducesResponseType(400)] // Bad Request
         public IActionResult CreateProduct([FromBody] Product product)
         {
-            if (product.Type != 0 && product.Type != 1)
-            {
-                return BadRequest("Kategoria produktu musi być ustawiona na 0 lub 1.");
-            }
-            if (product.Type == 0 && product.Availability != 0)
-            {
-                return BadRequest("Dostępność usługi musi być ustawiona na 0.");
-            }
             try
             {
+                if (product.Type != 0 && product.Type != 1)
+                {
+                    throw new InvalidOperationException("Kategoria produktu musi być ustawiona na 0 lub 1.");
+                }
+                if (product.Type == 0 && product.Availability != 0)
+                {
+                    throw new InvalidOperationException("Dostępność usługi musi być ustawiona na 0.");
+                }
+                if (product.Type == 1 && product.Availability < 0)
+                {
+                    throw new InvalidOperationException("Dostępność towaru nie może być ujemna.");
+                }
+                if (product.Price < 0)
+                {
+                    throw new InvalidOperationException("Produkt nie może posiadać ujemnej ceny.");
+                }
+
                 _productCrud.AddProduct(product);
                 return CreatedAtAction("GetProduct", new { id = product.Id }, product);
             }
-            catch (System.Exception ex)
+            catch (InvalidOperationException ioe)
+            {
+                return BadRequest(ioe.Message);
+            }
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -87,23 +102,36 @@ namespace FirmTracker_Server.Controllers
         [ProducesResponseType(400)] // Bad Request
         public IActionResult UpdateProduct(int id, [FromBody] Product product)
         {
-            if (id != product.Id)
-                return BadRequest("ID produktu nie zgadza się.");
-            if (product.Type != 0 && product.Type != 1)
-            {
-                return BadRequest("Kategoria produktu musi być ustawiona na 0 lub 1.");
-            }
-            if (product.Type == 0 && product.Availability != 0)
-            {
-                return BadRequest("Dostępność usługi musi być ustawiona na 0.");
-            }
-
             try
             {
+                if (id != product.Id)
+                    throw new InvalidOperationException("ID produktu nie zgadza się.");
+                if (product.Type != 0 && product.Type != 1)
+                {
+                    throw new InvalidOperationException("Kategoria produktu musi być ustawiona na 0 lub 1.");
+                }
+                if (product.Type == 0 && product.Availability != 0)
+                {
+                    throw new InvalidOperationException("Dostępność usługi musi być ustawiona na 0.");
+                }
+                if (product.Type == 1 && product.Availability < 0)
+                {
+                    throw new InvalidOperationException("Dostępność towaru nie może być ujemna.");
+                }
+                if (product.Price < 0)
+                {
+                    throw new InvalidOperationException("Produkt nie może posiadać ujemnej ceny.");
+                }
+
+
                 _productCrud.UpdateProduct(product);
                 return NoContent();
             }
-            catch (System.Exception ex)
+            catch (InvalidOperationException ioe)
+            {
+                return BadRequest(ioe.Message);
+            }
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -119,6 +147,10 @@ namespace FirmTracker_Server.Controllers
             {
                 _productCrud.DeleteProduct(id);
                 return NoContent();
+            }
+            catch (InvalidOperationException ioe)
+            {
+                return BadRequest($"{ioe.Message}");
             }
             catch (System.Exception ex)
             {

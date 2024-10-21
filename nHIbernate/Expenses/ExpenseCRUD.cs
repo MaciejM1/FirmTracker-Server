@@ -17,6 +17,8 @@
 
 using FirmTracker_Server.nHibernate;
 using FirmTracker_Server.nHibernate.Products;
+using FirmTracker_Server.nHibernate.Reports;
+using NHibernate.Criterion;
 
 namespace FirmTracker_Server.nHibernate.Expenses
 {
@@ -102,6 +104,16 @@ namespace FirmTracker_Server.nHibernate.Expenses
                 var expense = session.Get<Expense>(expenseId);
                 if (expense != null)
                     {
+                        var criteria = session.CreateCriteria<ReportExpense>();
+                        criteria.Add(Restrictions.Eq("Expense.Id", expenseId));
+                        var reportExpenses = criteria.List<ReportExpense>();
+
+                        if (reportExpenses.Any())
+                        {
+                            throw new InvalidOperationException("Nie można usunąć wydatku. Wydatek jest ujęty w co najmniej jednym z raportów.");
+                        }
+
+
                         session.Delete(expense);
                         transaction.Commit();
                     }

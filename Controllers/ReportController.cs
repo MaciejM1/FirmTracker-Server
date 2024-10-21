@@ -64,7 +64,7 @@ namespace FirmTracker_Server.Controllers
                         .Where(e => e.Date >= fromDate && e.Date <= toDate)
                         .ToList();
 
-                    
+
                     decimal totalIncome = 0;
                     foreach (var transaction in transactions)
                     {
@@ -126,7 +126,7 @@ namespace FirmTracker_Server.Controllers
 
             var options = new JsonSerializerOptions
             {
-                ReferenceHandler = ReferenceHandler.Preserve 
+                ReferenceHandler = ReferenceHandler.Preserve
             };
 
             var json = JsonSerializer.Serialize(report, options);
@@ -202,7 +202,7 @@ namespace FirmTracker_Server.Controllers
                         .Where(e => e.Date >= fromDate && e.Date <= toDate)
                         .ToList();
 
-                    
+
                     decimal totalIncome = 0;
                     foreach (var transaction in transactions)
                     {
@@ -241,7 +241,7 @@ namespace FirmTracker_Server.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
         public IActionResult DeleteReport(int id)
