@@ -21,6 +21,12 @@ using FirmTracker_Server.nHibernate.Products;
 using FirmTracker_Server.nHibernate.Transactions;
 using FirmTracker_Server.nHibernate.Expenses;
 using NHibernate;
+using FirmTracker_Server.Entities;
+using FirmTracker_Server.Services;
+using AutoMapper;
+using FirmTracker_Server.Authentication;
+using Microsoft.AspNetCore.Identity;
+using FirmTracker_Server.Models;
 
 namespace FirmTracker_Server
 {
@@ -162,10 +168,16 @@ namespace FirmTracker_Server
 
             };
 
+          
+
+          
+         
+
             try
             {
                 FirmTracker_Server.nHibernate.Products.ProductCRUD productCrud = new ProductCRUD();
                 FirmTracker_Server.nHibernate.Transactions.TransactionCRUD transactionCrud = new nHibernate.Transactions.TransactionCRUD();
+               
                 ExpenseCRUD expenseCrud = new ExpenseCRUD();
                // productCrud.AddProduct(product);
                 productCrud.AddProduct(product2);

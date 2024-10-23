@@ -16,6 +16,8 @@
  */
 
 using FirmTracker_Server.nHibernate.Products;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using System;
 
@@ -23,6 +25,7 @@ namespace FirmTracker_Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ProductsController : ControllerBase
     {
         private readonly ProductCRUD _productCrud;
@@ -39,6 +42,7 @@ namespace FirmTracker_Server.Controllers
         [HttpPost]
         [ProducesResponseType(200)] // Created
         [ProducesResponseType(400)] // Bad Request
+        [Authorize(Roles = Roles.User)]
         public IActionResult CreateProduct([FromBody] Product product)
         {
             try
@@ -162,6 +166,7 @@ namespace FirmTracker_Server.Controllers
         [HttpGet]
         [ProducesResponseType(200)] // Created
         [ProducesResponseType(400)] // Bad Request
+        [Authorize(Roles =Roles.User)]
         public IActionResult GetAllProducts()
         {
             var products = _productCrud.GetAllProducts();
