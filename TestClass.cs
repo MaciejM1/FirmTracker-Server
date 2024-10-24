@@ -27,6 +27,7 @@ using AutoMapper;
 using FirmTracker_Server.Authentication;
 using Microsoft.AspNetCore.Identity;
 using FirmTracker_Server.Models;
+using System.Data.SqlClient;
 
 namespace FirmTracker_Server
 {
@@ -168,10 +169,53 @@ namespace FirmTracker_Server
 
             };
 
-          
+            try
+            {
+                string appDirectory = Directory.GetCurrentDirectory();
+                string configFilePath = Path.Combine(appDirectory, "appsettings.json");
+                string connectionString = "";
+                if (File.Exists(configFilePath))
+                {
+                    var config = new ConfigurationBuilder()
+                      .AddJsonFile(configFilePath)
+                      .Build();
 
-          
-         
+                    var connectionstringsection = config.GetSection("AppSettings:ConnectionString");
+
+                    connectionString = connectionstringsection.Value;
+
+                    //SessionFactory.Init(connectionString);
+
+                    string queryUser = "insert into Users(Email,PassHash,Role) select '123@wp.pl', 'GOsGemJarMJu8btZKF6Rung27JLZkdO7Wfd4CwLhL1k=','User'";
+                    string queryAdmin = "insert into Users(Email,PassHash,Role) select '321@wp.pl', 'GOsGemJarMJu8btZKF6Rung27JLZkdO7Wfd4CwLhL1k=','Admin'";
+
+                   
+                    SqlConnection connection = new SqlConnection(connectionString);
+                    connection.Open();
+
+                    SqlCommand command = new SqlCommand(queryUser, connection);
+                    command.CommandTimeout = 200;
+                    command.ExecuteNonQuery();
+                    connection.Close();
+
+                 
+                    SqlConnection connection2 = new SqlConnection(connectionString);
+                    connection.Open();
+
+                    SqlCommand command2 = new SqlCommand(queryAdmin, connection);
+                    command2.CommandTimeout = 200;
+                    command2.ExecuteNonQuery();
+                    connection2.Close();
+
+                }
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Nie udało się dodać kont użytkowników " + e.Message);
+            }
+
+
 
             try
             {
