@@ -166,7 +166,7 @@ namespace FirmTracker_Server.Controllers
         [HttpGet]
         [ProducesResponseType(200)] // Created
         [ProducesResponseType(400)] // Bad Request
-        [Authorize(Roles =Roles.User)]
+        [Authorize(Roles =Roles.Admin)]
         public IActionResult GetAllProducts()
         {
             var products = _productCrud.GetAllProducts();
