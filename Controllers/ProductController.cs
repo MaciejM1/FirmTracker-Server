@@ -16,6 +16,8 @@
  */
 
 using FirmTracker_Server.nHibernate.Products;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using System;
 
@@ -23,6 +25,7 @@ namespace FirmTracker_Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ProductsController : ControllerBase
     {
         private readonly ProductCRUD _productCrud;
@@ -39,6 +42,7 @@ namespace FirmTracker_Server.Controllers
         [HttpPost]
         [ProducesResponseType(200)] // Created
         [ProducesResponseType(400)] // Bad Request
+        [Authorize(Roles = Roles.Admin)]
         public IActionResult CreateProduct([FromBody] Product product)
         {
             try
@@ -77,6 +81,7 @@ namespace FirmTracker_Server.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(200)] // Created
         [ProducesResponseType(400)] // Bad Request
+        [Authorize(Roles=Roles.Admin+","+Roles.User)]
         public IActionResult GetProduct(int id)
         {
             var product = _productCrud.GetProduct(id);
@@ -88,6 +93,7 @@ namespace FirmTracker_Server.Controllers
         [HttpGet("name/{name}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
+        [Authorize(Roles = Roles.Admin + "," + Roles.User)]
         public IActionResult GetProductByName(string name)
         {
             var product = _productCrud.GetProductByName(name);
@@ -100,6 +106,7 @@ namespace FirmTracker_Server.Controllers
         [HttpPut("{id}")]
         [ProducesResponseType(200)] // Created
         [ProducesResponseType(400)] // Bad Request
+        [Authorize(Roles = Roles.Admin + "," + Roles.User)]
         public IActionResult UpdateProduct(int id, [FromBody] Product product)
         {
             try
@@ -141,6 +148,7 @@ namespace FirmTracker_Server.Controllers
         [HttpDelete("{id}")]
         [ProducesResponseType(200)] // Created
         [ProducesResponseType(400)] // Bad Request
+        [Authorize(Roles = Roles.Admin)]
         public IActionResult DeleteProduct(int id)
         {
             try
@@ -162,6 +170,7 @@ namespace FirmTracker_Server.Controllers
         [HttpGet]
         [ProducesResponseType(200)] // Created
         [ProducesResponseType(400)] // Bad Request
+        [Authorize(Roles = Roles.Admin + "," + Roles.User)]
         public IActionResult GetAllProducts()
         {
             var products = _productCrud.GetAllProducts();

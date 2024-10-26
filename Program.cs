@@ -24,13 +24,27 @@ using FirmTracker_Server.nHibernate.Products;
 using FirmTracker_Server.nHibernate;
 using FirmTracker_Server.Utilities.Converters;
 using FirmTracker_Server.Utilities.Swagger;
+using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
+using AutoMapper;
+using Microsoft.AspNetCore.Authentication;
+using System.Text;
+using FirmTracker_Server.Entities;
+using FirmTracker_Server.Middleware;
+using FirmTracker_Server.Services;
+using System.Reflection;
+using FirmTracker_Server.Mappings;
+
 
 namespace FirmTracker_Server
 {
-    public class Program
+    internal static class Program
     {
 
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
             string appDirectory = Directory.GetCurrentDirectory();        
@@ -55,6 +69,7 @@ namespace FirmTracker_Server
 
             TestClass test = new TestClass();
             test.AddTestProduct();
+         
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowSpecificOrigin",
@@ -62,18 +77,23 @@ namespace FirmTracker_Server
                         .AllowAnyHeader()
                         .AllowAnyMethod());
             });
+            builder.Services.ConfigureAutoMapper();
+            builder.Services.ConfigureServiceInjection();
             builder.Services.AddControllers()
                 .AddJsonOptions(options =>
                 {
                     options.JsonSerializerOptions.Converters.Add(new DateTimeConverter());
                 });
                 ;
-
+            builder.ConfigureAuthentication();
+            builder.Services.AddAuthorization();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>
             {
                 c.SchemaFilter<SwaggerDateTimeSchemaFilter>();
             });
+
+
 
             var app = builder.Build();
             var configSwagger = new ConfigurationBuilder()
@@ -107,6 +127,7 @@ namespace FirmTracker_Server
             app.UseCors("AllowSpecificOrigin");
 
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
       
@@ -117,5 +138,43 @@ namespace FirmTracker_Server
 
             app.Run();
         }
+        private static void ConfigureAuthentication(this WebApplicationBuilder builder)
+        {
+            var authenticationSettings = new Authentication.AuthenticationSettings();
+            builder.Configuration.GetSection("TokenConfig").Bind(authenticationSettings);
+            builder.Services.AddAuthentication(option => {
+                option.DefaultAuthenticateScheme = "Bearer";
+                option.DefaultScheme = "Bearer";
+                option.DefaultChallengeScheme = "Bearer";
+            }).AddJwtBearer(options => {
+                options.RequireHttpsMetadata = false;
+                options.SaveToken = true;
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidIssuer = authenticationSettings.JwtIssuer,
+                    ValidAudience = authenticationSettings.JwtIssuer,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationSettings.JwtSecKey)),
+                };
+            });
+            builder.Services.AddSingleton(authenticationSettings);
+        }
+        private static void ConfigureAutoMapper(this IServiceCollection services)
+        {
+            var mapperConfig = new MapperConfiguration(mc => {
+                mc.AddProfile<LicenseMappingProfile>();
+               // mc.AddProfile<PayLinkerMappingProfile>();
+            });
+            var mapper = mapperConfig.CreateMapper();
+            services.AddSingleton(mapper);
+            services.AddAutoMapper(Assembly.GetExecutingAssembly());
+        }
+        private static void ConfigureServiceInjection(this IServiceCollection services)
+        {         
+            services.AddScoped<IUserService, UserService>();          
+            services.AddScoped<ErrorHandling>();      
+            services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+            services.AddMvc();
+        }
+
     }
 }

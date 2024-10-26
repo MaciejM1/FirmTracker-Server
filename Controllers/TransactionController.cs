@@ -24,11 +24,13 @@ using System.Transactions;
 using FirmTracker_Server.nHibernate.Products;
 using FirmTracker_Server.nHibernate;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FirmTracker_Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class TransactionController : ControllerBase
     {
         private readonly TransactionCRUD _transactionCRUD;
@@ -48,6 +50,7 @@ namespace FirmTracker_Server.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = Roles.Admin + "," + Roles.User)]
         public IActionResult CreateTransaction([FromBody] nHibernate.Transactions.Transaction transaction)
         {
             try
@@ -106,6 +109,7 @@ namespace FirmTracker_Server.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Authorize(Roles = Roles.Admin + "," + Roles.User)]
         public IActionResult GetTransaction(int id)
         {
             var transaction = _transactionCRUD.GetTransaction(id);
@@ -118,6 +122,7 @@ namespace FirmTracker_Server.Controllers
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = Roles.Admin + "," + Roles.User)]
         public IActionResult UpdateTransaction(int id, [FromBody] nHibernate.Transactions.Transaction transaction)
         {
             if (id != transaction.Id)
@@ -160,6 +165,7 @@ namespace FirmTracker_Server.Controllers
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Authorize(Roles = Roles.Admin + "," + Roles.User)]
         public IActionResult DeleteTransaction(int id)
         {
             try
@@ -182,6 +188,7 @@ namespace FirmTracker_Server.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Authorize(Roles = Roles.Admin + "," + Roles.User)]
         public IActionResult GetAllTransactions()
         {
             var transactions = _transactionCRUD.GetAllTransactions();
