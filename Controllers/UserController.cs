@@ -4,6 +4,7 @@ using FirmTracker_Server;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using FirmTracker_Server.Entities;
+using System.Security.Claims;
 
 namespace FirmTracker_Server.Controllers
 {
@@ -38,13 +39,24 @@ namespace FirmTracker_Server.Controllers
             var token = UserService.CreateTokenJwt(dto);
             return Ok(token);
         }
-        // New method to get all users
-       /* [HttpGet("all")]
-        [AllowAnonymous]
-        public ActionResult<IList<User>> GetAllUsers()
+        [HttpGet("role")]
+        [Authorize(Roles = Roles.Admin + "," + Roles.User)]
+        public ActionResult<string> GetUserRole()
         {
-            var users = UserService.GetAllUsers();
-            return Ok(users);
-        }*/
+            var roleClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+            if (roleClaim == null)
+            {
+                return NotFound("Role not found for the logged-in user.");
+            }
+            return Ok(roleClaim);
+        }
+        // New method to get all users
+        /* [HttpGet("all")]
+         [AllowAnonymous]
+         public ActionResult<IList<User>> GetAllUsers()
+         {
+             var users = UserService.GetAllUsers();
+             return Ok(users);
+         }*/
     }
 }

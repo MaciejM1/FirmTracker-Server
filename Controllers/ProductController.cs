@@ -42,7 +42,7 @@ namespace FirmTracker_Server.Controllers
         [HttpPost]
         [ProducesResponseType(200)] // Created
         [ProducesResponseType(400)] // Bad Request
-        [Authorize(Roles = Roles.User)]
+        [Authorize(Roles = Roles.Admin)]
         public IActionResult CreateProduct([FromBody] Product product)
         {
             try
@@ -81,6 +81,7 @@ namespace FirmTracker_Server.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(200)] // Created
         [ProducesResponseType(400)] // Bad Request
+        [Authorize(Roles=Roles.Admin+","+Roles.User)]
         public IActionResult GetProduct(int id)
         {
             var product = _productCrud.GetProduct(id);
@@ -92,6 +93,7 @@ namespace FirmTracker_Server.Controllers
         [HttpGet("name/{name}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
+        [Authorize(Roles = Roles.Admin + "," + Roles.User)]
         public IActionResult GetProductByName(string name)
         {
             var product = _productCrud.GetProductByName(name);
@@ -104,6 +106,7 @@ namespace FirmTracker_Server.Controllers
         [HttpPut("{id}")]
         [ProducesResponseType(200)] // Created
         [ProducesResponseType(400)] // Bad Request
+        [Authorize(Roles = Roles.Admin + "," + Roles.User)]
         public IActionResult UpdateProduct(int id, [FromBody] Product product)
         {
             try
@@ -145,6 +148,7 @@ namespace FirmTracker_Server.Controllers
         [HttpDelete("{id}")]
         [ProducesResponseType(200)] // Created
         [ProducesResponseType(400)] // Bad Request
+        [Authorize(Roles = Roles.Admin)]
         public IActionResult DeleteProduct(int id)
         {
             try

@@ -24,12 +24,14 @@ using FirmTracker_Server.nHibernate.Expenses;
 using FirmTracker_Server.nHibernate.Products;
 using FirmTracker_Server.nHibernate;
 using NHibernate.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace FirmTracker_Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ReportController : ControllerBase
     {
         private readonly ReportCRUD _reportCRUD;
@@ -43,6 +45,7 @@ namespace FirmTracker_Server.Controllers
         [HttpPost]
         [ProducesResponseType(201)] //Created
         [ProducesResponseType(400)] //Bad request
+        [Authorize(Roles = Roles.Admin)]
         public IActionResult CreateReport([FromBody] Report.DateRangeDto dateRange)
         {
             try
@@ -118,6 +121,7 @@ namespace FirmTracker_Server.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
+        [Authorize(Roles = Roles.Admin)]
         public IActionResult GetReport(int id)
         {
             var report = _reportCRUD.GetReport(id);
@@ -136,6 +140,7 @@ namespace FirmTracker_Server.Controllers
         [HttpGet("{id}/transactions")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
+        [Authorize(Roles = Roles.Admin)]
         public IActionResult GetReportTransactions(int id)
         {
             var transactions = _reportCRUD.GetReportTransactions(id);
@@ -149,6 +154,7 @@ namespace FirmTracker_Server.Controllers
         [HttpGet("{id}/expenses")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
+        [Authorize(Roles = Roles.Admin)]
         public IActionResult GetReportExpenses(int id)
         {
             var expenses = _reportCRUD.GetReportExpenses(id);
@@ -163,6 +169,7 @@ namespace FirmTracker_Server.Controllers
         [HttpGet]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
+        [Authorize(Roles = Roles.Admin)]
         public IActionResult GetAllReports()
         {
             var reports = _reportCRUD.GetAllReports();
@@ -176,6 +183,7 @@ namespace FirmTracker_Server.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
+        [Authorize(Roles = Roles.Admin)]
         public IActionResult UpdateReport(int id, [FromBody] Report.DateRangeDto dateRange)
         {
             try
@@ -244,6 +252,7 @@ namespace FirmTracker_Server.Controllers
         [HttpDelete("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
+        [Authorize(Roles = Roles.Admin)]
         public IActionResult DeleteReport(int id)
         {
             try
