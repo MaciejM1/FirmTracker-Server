@@ -23,6 +23,8 @@ namespace FirmTracker_Server.Services
         UserDto GetById(int id);
         int AddUser(CreateUserDto dto);
         string CreateTokenJwt(LoginDto dto);
+        bool ChangePassword(int userMail, ChangePasswordDto dto);
+        bool ResetPassword(string userId, string newPassword);
 
     }
 
@@ -54,12 +56,13 @@ namespace FirmTracker_Server.Services
             }
         }
 
+
         public int AddUser(CreateUserDto dto)
         {
             var user = Mapper.Map<User>(dto);
 
             // Encrypt or hash the password based on NewEncryption flag
-            user.PassHash = dto.NewEncryption ? SimplerAES.Encrypt(dto.Password) : PasswordHasher.HashPassword(user, dto.Password);
+            user.PassHash = SimplerAES.Encrypt(dto.Password); //: PasswordHasher.HashPassword(user, dto.Password);
             user.Role = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(dto.Role.ToLower());
 
             using (var session = SessionFactory.OpenSession())
@@ -78,7 +81,75 @@ namespace FirmTracker_Server.Services
                 }
             }
         }
+        public bool ChangePassword(int userId, ChangePasswordDto dto)
+        {
+            using (var session = SessionFactory.OpenSession())
+            using (var transaction = session.BeginTransaction())
+            {
+                // Find user by ID
+                var user = session.Get<User>(userId);
+                if (user == null)
+                {
+                    throw new WrongUserOrPasswordException("User not found.");
+                }
 
+                // Verify old password
+                var oldPasswordCorrect = false;
+                if (user.NewEncryption)
+                {
+                    oldPasswordCorrect = SimplerAES.Decrypt(user.PassHash) == SimplerAES.Decrypt(dto.OldPassword);
+                }
+                else
+                {
+                    oldPasswordCorrect = SimplerAES.Decrypt(user.PassHash) == SimplerAES.Decrypt(dto.OldPassword);
+                }
+
+                if (!oldPasswordCorrect)
+                {
+                    throw new WrongUserOrPasswordException("The old password is incorrect.");
+                }
+
+               
+                if (user.NewEncryption)
+                {
+                    user.PassHash = SimplerAES.Encrypt(dto.NewPassword);
+                }
+                else
+                {
+                    user.PassHash = SimplerAES.Encrypt(dto.NewPassword);
+                }
+
+                session.Update(user);
+                transaction.Commit();
+                return true;
+            }
+        }
+        public bool ResetPassword(string userMail, string newPassword)
+        {
+            using (var session = SessionFactory.OpenSession())
+            using (var transaction = session.BeginTransaction())
+            {
+                var user = session.Get<User>(userMail);
+                if (user == null)
+                {
+                    throw new Exception("User not found");
+                }
+
+                // Encrypt or hash the new password
+                if (user.NewEncryption)
+                {
+                    user.PassHash = SimplerAES.Encrypt(newPassword); // Or apply hashing if needed
+                }
+                else
+                {
+                    user.PassHash = SimplerAES.Encrypt(newPassword);
+                }
+
+                session.Update(user);
+                transaction.Commit();
+                return true;
+            }
+        }
         public string CreateTokenJwt(LoginDto dto)
         {
             User user = null;

@@ -73,9 +73,10 @@ namespace FirmTracker_Server
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowSpecificOrigin",
-                    policy => policy.WithOrigins("http://localhost:3000")
+                    policy => policy.WithOrigins("http://localhost:3000", "https://localhost:7039", "https://localhost:5075", "https://localhost:3000")
                         .AllowAnyHeader()
-                        .AllowAnyMethod());
+                        .AllowAnyMethod()
+                        .AllowCredentials());
             });
             builder.Services.ConfigureAutoMapper();
             builder.Services.ConfigureServiceInjection();
@@ -122,8 +123,8 @@ namespace FirmTracker_Server
             {
                 Console.WriteLine("Nie uda³o siê uruchomiæ swaggera");
             }
-            app.UseHttpsRedirection();
 
+            app.UseRouting();
             app.UseCors("AllowSpecificOrigin");
 
 
