@@ -37,6 +37,7 @@ using FirmTracker_Server.Middleware;
 using FirmTracker_Server.Services;
 using System.Reflection;
 using FirmTracker_Server.Mappings;
+using NuGet.Packaging;
 
 
 namespace FirmTracker_Server
@@ -69,7 +70,8 @@ namespace FirmTracker_Server
 
             TestClass test = new TestClass();
             test.AddTestProduct();
-         
+            QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
+
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowSpecificOrigin",
@@ -173,6 +175,7 @@ namespace FirmTracker_Server
             services.AddScoped<IUserService, UserService>();          
             services.AddScoped<ErrorHandling>();      
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+            services.AddScoped<IExpenseRepository, ExpenseRepository>();
             services.AddMvc();
         }
 
