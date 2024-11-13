@@ -40,6 +40,7 @@ using FirmTracker_Server.Mappings;
 using NuGet.Packaging;
 
 
+
 namespace FirmTracker_Server
 {
     internal static class Program
@@ -176,6 +177,7 @@ namespace FirmTracker_Server
             services.AddScoped<ErrorHandling>();      
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
             services.AddScoped<IExpenseRepository, ExpenseRepository>();
+           // services.AddScoped<IWorkdayRepository, WorkdayRepository>();
             services.AddMvc();
         }
 

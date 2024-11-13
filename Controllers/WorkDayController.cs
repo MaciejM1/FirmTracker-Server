@@ -1,55 +1,58 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Concurrent;
-using System.Linq;
+﻿/*
+ * This file is part of FirmTracker - Server.
+ *
+ * FirmTracker - Server is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * FirmTracker - Server is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with FirmTracker - Server. If not, see <https://www.gnu.org/licenses/>.
+ */
 
-namespace YourNamespace.Controllers
+using FirmTracker_Server.nHibernate;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Security.Claims;
+
+namespace FirmTracker_Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class WorkdayController : ControllerBase
     {
-        // In-memory storage for simplicity, where the key is the userId.
-        private static readonly ConcurrentDictionary<string, DateTime?> WorkStartTimes = new ConcurrentDictionary<string, DateTime?>();
+        private readonly WorkdayRepository _workdayCRUD;
 
-        // Get the current status of the user's workday (started or not)
-        [HttpGet("status/{userId}")]
-        public IActionResult GetWorkdayStatus(string userId)
+        public WorkdayController()
         {
-            if (WorkStartTimes.TryGetValue(userId, out DateTime? startTime))
+            _workdayCRUD = new WorkdayRepository(); // Instantiate directly (no DI in this example)
+        }
+
+        // Endpoint to start a workday
+        [HttpPost("start")]
+        [Authorize(Roles = Roles.Admin + "," + Roles.User)]
+        public IActionResult StartWorkday()
+        {
+            try
             {
-                if (startTime.HasValue)
-                {
-                    return Ok(new { status = "started", startTime = startTime });
-                }
-                else
-                {
-                    return Ok(new { status = "stopped" });
-                }
+                var userIdString = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+                int userId = int.Parse(userIdString);
+                _workdayCRUD.StartWorkday(userId);
+                return Ok(new { status = "started", userId });
             }
-            else
+            catch (Exception ex)
             {
-                return NotFound(new { message = "User not found" });
+                return BadRequest(new { message = "An error occurred while starting the workday.", error = ex.Message });
             }
         }
 
-        // Start or stop the user's workday by toggling the start/stop state
-        [HttpPost("toggle/{userId}")]
-        public IActionResult ToggleWorkday(string userId)
-        {
-            // If the workday has already started, stop it, otherwise start it
-            if (WorkStartTimes.ContainsKey(userId) && WorkStartTimes[userId].HasValue)
-            {
-                // Stop the workday
-                WorkStartTimes[userId] = null;
-                return Ok(new { status = "stopped" });
-            }
-            else
-            {
-                // Start the workday
-                WorkStartTimes[userId] = DateTime.Now;
-                return Ok(new { status = "started", startTime = WorkStartTimes[userId] });
-            }
-        }
+      
     }
 }
