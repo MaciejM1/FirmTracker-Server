@@ -177,6 +177,7 @@ namespace FirmTracker_Server
             services.AddScoped<ErrorHandling>();      
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
             services.AddScoped<IExpenseRepository, ExpenseRepository>();
+            services.AddScoped<ITransactionRepository, TransactionRepository>();
            // services.AddScoped<IWorkdayRepository, WorkdayRepository>();
             services.AddMvc();
         }

@@ -157,7 +157,7 @@ namespace FirmTracker_Server
             };
             var expense2 = new Expense
             {
-                Date = DateTime.Now,
+                Date = DateTime.Parse("2024-09-10 16:11:17.6232408"),
                 Value = 990.99m,
                 Description = "naprawa pieca - 25.05.2024"
             };
