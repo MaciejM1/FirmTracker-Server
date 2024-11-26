@@ -44,7 +44,7 @@ namespace FirmTracker_Server.nHibernate
                     .ToList();
             }
         }
-        // Retrieve a specific transaction by ID
+
         public Transaction GetTransaction(int transactionId)
         {
             using (var session = SessionFactory.OpenSession())
@@ -53,7 +53,7 @@ namespace FirmTracker_Server.nHibernate
             }
         }
 
-        // Retrieve transactions within a specific date range
+ 
         public List<Transaction> GetTransactionsByDateRange(DateTime startDate, DateTime endDate)
         {
             using (var session = SessionFactory.OpenSession())
@@ -64,7 +64,7 @@ namespace FirmTracker_Server.nHibernate
             }
         }
 
-        // Retrieve all products for a specific transaction
+
         public List<TransactionProduct> GetTransactionProducts(int transactionId)
         {
             using (var session = SessionFactory.OpenSession())
@@ -75,7 +75,7 @@ namespace FirmTracker_Server.nHibernate
             }
         }
 
-        // Add a new transaction
+
         public void AddTransaction(Transaction transaction)
         {
             using (var session = SessionFactory.OpenSession())
@@ -113,7 +113,7 @@ namespace FirmTracker_Server.nHibernate
             }
         }
 
-        // Delete a transaction by ID
+ 
         public void DeleteTransaction(int transactionId)
         {
             using (var session = SessionFactory.OpenSession())

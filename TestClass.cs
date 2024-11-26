@@ -239,9 +239,9 @@ namespace FirmTracker_Server
                 expenseCrud.AddExpense(expense3);
 
                 List<TransactionProduct> testTransactionProducts = new List<TransactionProduct>  {
-                    new TransactionProduct { ProductID =17, Quantity = 10 },
+                    new TransactionProduct { ProductID =17, Quantity = 3 },
                     new TransactionProduct { ProductID = 14, Quantity = 1 },
-                    new TransactionProduct { ProductID = 1, Quantity = 0 },
+                    new TransactionProduct { ProductID = 1, Quantity = 1 },
                 };
                 foreach (var transactionProduct in testTransactionProducts)
                 {

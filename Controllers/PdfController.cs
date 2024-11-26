@@ -5,6 +5,7 @@ using System.Linq;
 using FirmTracker_Server.nHibernate;
 using FirmTracker_Server.nHibernate.Expenses;
 using FirmTracker_Server.nHibernate.Transactions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
@@ -14,6 +15,7 @@ namespace FirmTracker_Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class PdfController : ControllerBase
     {
         private readonly IExpenseRepository _expenseRepository;
@@ -26,6 +28,7 @@ namespace FirmTracker_Server.Controllers
         }
 
         [HttpGet("download")]
+        [Authorize(Roles = Roles.Admin)]
         public IActionResult DownloadReport(
             [FromQuery] string reportType, // "expenses" or "transactions"
             [FromQuery] DateTime? startDate,

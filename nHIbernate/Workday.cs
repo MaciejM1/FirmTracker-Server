@@ -7,6 +7,18 @@ namespace FirmTracker_Server.nHibernate
         public virtual int Id { get; set; }
         public virtual DateTime StartTime { get; set; }
         public virtual DateTime? EndTime { get; set; }  // Nullable EndTime, if not finished
-        public virtual User User { get; set; } // Assuming a relationship to a User entity
+        public virtual TimeSpan WorkedHours
+        {
+            get
+            {
+                // Calculate the worked hours, using 5 PM as the fallback for the EndTime
+                return (EndTime ?? DateTime.Today.AddHours(24)) - StartTime;
+            }
+            set
+            {
+               
+            }
+        }
+        public virtual User User { get; set; } 
     }
 }
