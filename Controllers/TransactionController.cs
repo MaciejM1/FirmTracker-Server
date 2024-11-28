@@ -55,14 +55,21 @@ namespace FirmTracker_Server.Controllers
         {
             try
             {
-                
+               
                 foreach (var product in transaction.TransactionProducts)
                 {
+                    // Validate if the product quantity is positive
+                    if (product.Quantity <= 0)
+                    {
+                        return BadRequest($"Ilość na produktu {product.ProductName} musi być dodatnia.");
+                    }
                     var productByName = _productCRUD.GetProductByName(product.ProductName);
                     if (productByName == null)
                     {
                         throw new InvalidOperationException($"Produkt o nazwie {product.ProductName} nie istnieje.");
                     }
+                  
+                   
                     product.ProductID = productByName.Id;
                     product.TransactionId = transaction.Id;
 
@@ -132,6 +139,11 @@ namespace FirmTracker_Server.Controllers
             {
                 foreach (var product in transaction.TransactionProducts)
                 {
+                    // Validate if the product quantity is positive
+                    if (product.Quantity <= 0)
+                    {
+                        return BadRequest($"Sprzedawana ilość produktu {product.ProductName} musi być ilością dodatnią.");
+                    }
                     var productByName = _productCRUD.GetProductByName(product.ProductName);
                     if (productByName == null)
                     {
@@ -207,5 +219,27 @@ namespace FirmTracker_Server.Controllers
             return Ok(transactions);
         }
 
+        // DELETE: api/Transaction/5/product/10
+        [HttpDelete("{transactionId}/product/{productId}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Authorize(Roles = Roles.Admin + "," + Roles.User)]
+        public IActionResult DeleteTransactionProduct(int transactionId, int productId)
+        {
+            try
+            {
+                _transactionCRUD.DeleteTransactionProduct(transactionId, productId);
+                return NoContent();  // Successfully removed the product
+            }
+            catch (InvalidOperationException ioe)
+            {
+                return BadRequest(ioe.Message);  // If the transaction or product isn't found
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);  // Other general errors
+            }
+        }
     }
 }

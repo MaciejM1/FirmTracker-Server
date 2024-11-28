@@ -7,7 +7,7 @@ public class UserMapping : ClassMap<User>
     {
         Table("Users"); // The name of your table in the database
 
-        Id(x => x.Id); // Mapping the Id property
+        Id(x => x.UserId); // Mapping the Id property
         Map(x => x.Email); // Mapping other properties
         Map(x => x.PassHash);
         Map(x => x.Role);
