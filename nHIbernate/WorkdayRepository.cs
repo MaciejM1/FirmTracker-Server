@@ -30,7 +30,8 @@ public class WorkdayRepository
                 var workday = new Workday
                 {
                     StartTime = DateTime.Now,
-                    User = user
+                    User = user,
+                    Absence = ""
                 };
 
                 session.Save(workday);
@@ -40,6 +41,36 @@ public class WorkdayRepository
             {
                 transaction.Rollback();
                 throw new Exception("An error occurred while starting the workday", ex);
+            }
+        }
+    }
+    
+    public void AddAbsence(int userId, string absenceType, DateTime startTime, DateTime endTime)
+    {
+        using (var session = SessionFactory.OpenSession())
+        using (var transaction = session.BeginTransaction())
+        {
+            try
+            {
+                var user = session.Get<User>(userId);
+                if (user == null) throw new Exception("User not found");
+
+                // Create a new workday entry for the absence
+                var workday = new Workday
+                {
+                    User = user,
+                    StartTime = startTime,
+                    EndTime = endTime,
+                    Absence = absenceType  // Store the absence type as a string
+                };
+
+                session.Save(workday);
+                transaction.Commit();
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                throw new Exception("An error occurred while adding the absence", ex);
             }
         }
     }
@@ -90,6 +121,7 @@ public class WorkdayRepository
                         StartTime = w.StartTime,
                         EndTime = w.EndTime ?? DateTime.Today.AddHours(17),
                         WorkedHours = (w.EndTime ?? DateTime.Today.AddHours(17)) - w.StartTime,
+                        Absence = w.Absence,
                     })
                     .ToList();
 

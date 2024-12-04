@@ -23,7 +23,7 @@ namespace FirmTracker_Server.Services
         UserDto GetById(int id);
         int AddUser(CreateUserDto dto);
         string CreateTokenJwt(LoginDto dto);
-
+        IEnumerable<string> GetAllUserEmails();
     }
 
     public class UserService : IUserService
@@ -44,7 +44,15 @@ namespace FirmTracker_Server.Services
             SimplerAES = new SimplerAES();
             //SessionFactory = sessionFactory;
         }
-
+        public IEnumerable<string> GetAllUserEmails()
+        {
+            using (var session = SessionFactory.OpenSession())
+            {
+                // Query the users and return a list of emails
+                var users = session.Query<User>().Select(u => u.Email).ToList();
+                return users;
+            }
+        }
         public UserDto GetById(int id)
         {
             using (var session = SessionFactory.OpenSession())

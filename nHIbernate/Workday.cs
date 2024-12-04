@@ -20,5 +20,6 @@ namespace FirmTracker_Server.nHibernate
             }
         }
         public virtual User User { get; set; } 
+        public virtual string Absence { get; set; }
     }
 }
