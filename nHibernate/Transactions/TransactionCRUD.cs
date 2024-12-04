@@ -293,7 +293,7 @@ namespace FirmTracker_Server.nHibernate.Transactions
                     }
 
                     // Remove the product from the transaction
-                    transaction.TotalPrice -= (transactionProduct.Quantity * product.Price * (1 - (transaction.Discount / 100)));
+                    transaction.TotalPrice = (transaction.TotalPrice * (1 + (transaction.Discount / 100))) - (transactionProduct.Quantity * product.Price );
                     transaction.TotalPrice = Math.Round(transaction.TotalPrice, 2, MidpointRounding.AwayFromZero);
 
                     // Remove the product from the Transaction's Product list

@@ -50,6 +50,18 @@ namespace FirmTracker_Server.Controllers
             }
             return Ok(roleClaim);
         }
+        [HttpGet("emails")]
+        [Authorize(Roles = Roles.Admin)]
+        public ActionResult<IEnumerable<string>> GetAllUserEmails()
+        {
+            var emails = UserService.GetAllUserEmails();
+            if (emails == null || !emails.Any())
+            {
+                return NotFound("No users found or unable to retrieve emails.");
+            }
+
+            return Ok(emails);
+        }
         // New method to get all users
         /* [HttpGet("all")]
          [AllowAnonymous]

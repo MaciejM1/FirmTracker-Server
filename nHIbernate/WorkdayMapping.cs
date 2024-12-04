@@ -10,6 +10,7 @@ namespace FirmTracker_Server.nHibernate
             Map(x => x.StartTime);
             Map(x => x.EndTime);
             References(x => x.User).Column("UserId"); // Assuming Workday is related to a User
+            Map(x => x.Absence);
         }
     }
 }

@@ -15,6 +15,8 @@
  * along with FirmTracker - Server. If not, see <https://www.gnu.org/licenses/>.
  */
 
+using FirmTracker_Server.Entities;
+using FirmTracker_Server.Models;
 using FirmTracker_Server.nHibernate;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -74,6 +76,8 @@ namespace FirmTracker_Server.Controllers
             }
         }
 
+
+        
         // Endpoint to get all workdays for a user
         [HttpGet("user/{userMail}/workdays")]
         [Authorize(Roles = Roles.Admin + "," + Roles.User)]
@@ -87,6 +91,39 @@ namespace FirmTracker_Server.Controllers
             catch (Exception ex)
             {
                 return BadRequest(new { message = "An error occurred while fetching workdays.", error = ex.Message });
+            }
+        }
+        [HttpPost("absence/add")]
+        [Authorize(Roles = Roles.Admin + "," + Roles.User)]
+        public IActionResult AddAbsence([FromBody] AddAbsenceDto dto)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(dto.userEmail))
+                {
+                    return BadRequest(new { message = "User email must be provided." });
+                }
+
+                // Fetch the userId based on the provided email
+                int userId;
+                using (var session = SessionFactory.OpenSession())
+                {
+                    var user = session.Query<User>().FirstOrDefault(u => u.Email == dto.userEmail);
+                    if (user == null)
+                    {
+                        return NotFound(new { message = "User with the given email not found." });
+                    }
+                    userId = user.UserId;
+                }
+
+                // Add the absence for the retrieved userId
+                _workdayCRUD.AddAbsence(userId, dto.AbsenceType, dto.StartTime, dto.EndTime);
+
+                return Ok(new { status = "added", userId, dto.userEmail, absenceType = dto.AbsenceType });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = "An error occurred while adding the absence.", error = ex.Message });
             }
         }
 
