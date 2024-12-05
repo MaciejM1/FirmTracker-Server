@@ -14,12 +14,10 @@ pipeline {
             }
         }
         stage('push') {
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'DockerHub-LG', passwordVariable: 'PSWD', usernameVariable: 'LOGIN')]) {
+            steps {              
                     script {
-                        sh 'echo ${PSWD} | docker login -u ${LOGIN} --password-stdin'
-                        sh 'docker push ${DOCKER_REPO}:${IMG_NAME}'
-                    }
+                        sh 'echo 'Makaron118912'  | docker login -u 'maciejm.01@interia.pl' --password-stdin'
+                        sh 'docker push ${DOCKER_REPO}:${IMG_NAME}'                
                 }
             }
         }
