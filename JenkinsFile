@@ -1,23 +1,26 @@
 pipeline {
     agent any
+    environment {
+        IMG_NAME = 'firmtracker-server'
+        DOCKER_REPO = 'maciejm0101/firmtracker'
+    }
     stages {
-        stage('Restore Dependencies') {
+        stage('build') {
             steps {
-                echo 'Restoring dependencies...'
-                sh 'dotnet restore'
+                script {
+                        sh 'docker build -t ${IMG_NAME} .'
+                        sh 'docker tag ${IMG_NAME} ${DOCKER_REPO}:${IMG_NAME}'
+                }
             }
         }
-        stage('Build') {
+        stage('push') {
             steps {
-                echo 'Building the project...'
-                sh 'dotnet build --configuration Release'
-            }
-        }
-        
-        stage('Publish') {
-            steps {
-                echo 'Publishing the project...'
-                sh 'dotnet publish --configuration Release --output ./publish'
+                withCredentials([usernamePassword(credentialsId: 'DockerHub-LG', passwordVariable: 'PSWD', usernameVariable: 'LOGIN')]) {
+                    script {
+                        sh 'echo ${PSWD} | docker login -u ${LOGIN} --password-stdin'
+                        sh 'docker push ${DOCKER_REPO}:${IMG_NAME}'
+                    }
+                }
             }
         }
     }
