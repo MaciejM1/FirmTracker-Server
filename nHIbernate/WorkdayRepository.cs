@@ -1,5 +1,6 @@
 ﻿using FirmTracker_Server.Entities;
 using FirmTracker_Server.nHibernate;
+using static NHibernate.Engine.Query.CallableParser;
 
 public class WorkdayRepository
 {
@@ -44,8 +45,29 @@ public class WorkdayRepository
             }
         }
     }
-    
-    public void AddAbsence(int userId, string absenceType, DateTime startTime, DateTime endTime)
+    public void AddAbsence(string Absence)
+    {
+        using (var session = SessionFactory.OpenSession())
+        using (var transaction = session.BeginTransaction())
+        {
+            try
+            {           
+                var absence = new Absence
+                {
+                   AbsenceName = Absence,
+                };
+
+                session.Save(absence);
+                transaction.Commit();
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                throw new Exception("An error occurred while adding the absence", ex);
+            }
+        }
+    }
+    public void AddAbsenceToUser(int userId, string absenceType, DateTime startTime, DateTime endTime)
     {
         using (var session = SessionFactory.OpenSession())
         using (var transaction = session.BeginTransaction())
@@ -70,10 +92,12 @@ public class WorkdayRepository
             catch (Exception ex)
             {
                 transaction.Rollback();
-                throw new Exception("An error occurred while adding the absence", ex);
+                throw new Exception("An error occurred while adding the absence to user ", ex);
             }
         }
     }
+
+   
 
     public bool StopWorkday(int userId)
     {
@@ -106,7 +130,28 @@ public class WorkdayRepository
             }
         }
     }
+    public List<Absence> GetAbsences()
+    {
 
+        using (var session = SessionFactory.OpenSession())
+        {
+            try
+            {
+                var absences = session.Query<Absence>()
+                    .Select(w => new Absence
+                    {                     
+                        AbsenceName = w.AbsenceName
+                    })
+                    .ToList();
+
+                return absences;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while fetching workdays", ex);
+            }
+        }
+    }
     public List<Workday> GetWorkdaysByUser(string email)
     {
         using (var session = SessionFactory.OpenSession())
@@ -124,6 +169,49 @@ public class WorkdayRepository
                         Absence = w.Absence,
                     })
                     .ToList();
+
+                foreach (var workday in workdays)
+                {
+                    if(workday.Absence!="")
+                    {
+                        workday.WorkedHours = TimeSpan.Zero;
+                    }
+                }
+
+                return workdays;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while fetching workdays", ex);
+            }
+        }
+    }
+    public List<Workday> GetWorkdaysByLoggedUser(string userId)
+    {
+        using (var session = SessionFactory.OpenSession())
+        {
+            try
+            {
+               int  parsedUserId = Int32.Parse(userId);
+                var workdays = session.Query<Workday>()
+                    .Where(w => w.User.UserId == parsedUserId)
+                    .Select(w => new Workday
+                    {
+                        Id = w.Id,
+                        StartTime = w.StartTime,
+                        EndTime = w.EndTime ?? DateTime.Today.AddHours(17),
+                        WorkedHours = (w.EndTime ?? DateTime.Today.AddHours(17)) - w.StartTime,
+                        Absence = w.Absence,
+                    })
+                    .ToList();
+
+                foreach (var workday in workdays)
+                {
+                    if (workday.Absence != "")
+                    {
+                        workday.WorkedHours = TimeSpan.Zero;
+                    }
+                }
 
                 return workdays;
             }

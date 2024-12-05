@@ -3,8 +3,6 @@ using FirmTracker_Server.Authentication;
 using FirmTracker_Server.Entities;
 using FirmTracker_Server.Exceptions;
 using FirmTracker_Server.Models;
-using FirmTracker_Server.Authentication;
-using FirmTracker_Server.Exceptions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.Globalization;
@@ -13,8 +11,7 @@ using System.Security.Claims;
 using System.Text;
 using szyfrowanie;
 using FirmTracker_Server.nHibernate;
-using NHibernate;
-using NHibernate.Criterion;
+
 
 namespace FirmTracker_Server.Services
 {

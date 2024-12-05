@@ -15,6 +15,7 @@
  * along with FirmTracker - Server. If not, see <https://www.gnu.org/licenses/>.
  */
 
+using FirmTracker_Server.nHIbernate;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
 using NHibernate;
@@ -56,7 +57,8 @@ namespace FirmTracker_Server.nHibernate
                     .AddFromAssemblyOf<Reports.ReportExpenseMapping>()
                     .AddFromAssemblyOf<LogsMapping>()
                     .AddFromAssemblyOf<UserMapping>()
-                    .AddFromAssemblyOf<WorkdayMapping>();
+                    .AddFromAssemblyOf<WorkdayMapping>()
+                    .AddFromAssemblyOf<AbsenceMapping>();
                     
                 })
                 .ExposeConfiguration(cfg => new SchemaExport(cfg).Create(true, true))  //SchemaUpdate . Execute  dla only update

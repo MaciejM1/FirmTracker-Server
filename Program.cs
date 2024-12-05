@@ -121,7 +121,7 @@ namespace FirmTracker_Server
                 Console.WriteLine("uruchomiono swaggera");
                 app.UseHttpsRedirection();
             }
-            catch (Exception ex)
+            catch 
             {
                 Console.WriteLine("Nie uda³o siê uruchomiæ swaggera");
             }

@@ -34,7 +34,7 @@ namespace FirmTracker_Server.Controllers
 
         public WorkdayController()
         {
-            _workdayCRUD = new WorkdayRepository(); 
+            _workdayCRUD = new WorkdayRepository();
         }
 
         // Endpoint to start a workday
@@ -77,8 +77,24 @@ namespace FirmTracker_Server.Controllers
         }
 
 
-        
-        // Endpoint to get all workdays for a user
+
+        [HttpGet("user/workdays")]
+        [Authorize(Roles = Roles.Admin + "," + Roles.User)]
+        public IActionResult GetWorkdaysLoggedUser()
+        {
+            try
+            {
+                var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+                var workdays = _workdayCRUD.GetWorkdaysByLoggedUser(userId);
+                return Ok(workdays);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = "An error occurred while fetching workdays.", error = ex.Message });
+            }
+        }
+
         [HttpGet("user/{userMail}/workdays")]
         [Authorize(Roles = Roles.Admin + "," + Roles.User)]
         public IActionResult GetWorkdays(string userMail)
@@ -93,9 +109,41 @@ namespace FirmTracker_Server.Controllers
                 return BadRequest(new { message = "An error occurred while fetching workdays.", error = ex.Message });
             }
         }
+        
+        [HttpGet("absences")]
+        [Authorize(Roles = Roles.Admin)]
+        public IActionResult GetAbsences()
+        {
+            try
+            {
+                var absences = _workdayCRUD.GetAbsences();
+                return Ok(absences);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = "An error occurred while fetching absences.", error = ex.Message });
+            }
+        }
         [HttpPost("absence/add")]
-        [Authorize(Roles = Roles.Admin + "," + Roles.User)]
-        public IActionResult AddAbsence([FromBody] AddAbsenceDto dto)
+        [Authorize(Roles = Roles.Admin)]
+        public IActionResult AddAbsence([FromBody] string Absence)
+        {
+            try
+            {
+                          
+                _workdayCRUD.AddAbsence(Absence);
+
+                return Ok(new { status = "added", Absence});
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = "An error occurred while adding the absence.", error = ex.Message });
+            }
+        }
+
+        [HttpPost("user/absence/add")]
+        [Authorize(Roles = Roles.Admin)]
+        public IActionResult AddUserAbsence([FromBody] AddAbsenceDto dto)
         {
             try
             {
@@ -117,13 +165,13 @@ namespace FirmTracker_Server.Controllers
                 }
 
                 // Add the absence for the retrieved userId
-                _workdayCRUD.AddAbsence(userId, dto.AbsenceType, dto.StartTime, dto.EndTime);
+                _workdayCRUD.AddAbsenceToUser(userId, dto.AbsenceType, dto.StartTime, dto.EndTime);
 
                 return Ok(new { status = "added", userId, dto.userEmail, absenceType = dto.AbsenceType });
             }
             catch (Exception ex)
             {
-                return BadRequest(new { message = "An error occurred while adding the absence.", error = ex.Message });
+                return BadRequest(new { message = "An error occurred while adding the absence to user.", error = ex.Message });
             }
         }
 

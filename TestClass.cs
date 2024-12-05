@@ -171,6 +171,24 @@ namespace FirmTracker_Server
 
             try
             {
+                var nieobecnosc1 = "Urlop / Urlop na żądanie" ;
+                var nieobecnosc2 =  "Zwolnienie chorobowe";
+                var nieobecnosc3 = "Szkolenie";
+                var nieobecnosc4 = "Przerwa prywatna";
+                WorkdayRepository work = new WorkdayRepository();
+                work.AddAbsence(nieobecnosc1);
+                work.AddAbsence(nieobecnosc2);
+                work.AddAbsence(nieobecnosc3);
+                work.AddAbsence(nieobecnosc4);
+
+            }
+            catch(Exception a)
+            {
+                Console.WriteLine("Nie udało się dodać typów nieobecności " + a.Message);
+            }
+
+            try
+            {
                 string appDirectory = Directory.GetCurrentDirectory();
                 string configFilePath = Path.Combine(appDirectory, "appsettings.json");
                 string connectionString = "";
