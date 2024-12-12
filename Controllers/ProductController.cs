@@ -63,6 +63,11 @@ namespace FirmTracker_Server.Controllers
                 {
                     throw new InvalidOperationException("Produkt nie może posiadać ujemnej ceny.");
                 }
+                var productByName = _productCrud.GetProductByName(product.Name);
+                if (productByName != null)
+                {
+                    throw new InvalidOperationException("Produkt o podanej nazwie już istnieje.");
+                }
 
                 _productCrud.AddProduct(product);
                 return CreatedAtAction("GetProduct", new { id = product.Id }, product);

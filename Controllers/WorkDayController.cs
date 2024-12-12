@@ -127,6 +127,35 @@ namespace FirmTracker_Server.Controllers
             }
         }
 
-
+        [HttpGet("user/{userMail}/day/info/{date}")]
+        [Authorize(Roles = Roles.Admin + "," + Roles.User)]
+        public IActionResult GetUserDayDetailsByMail(string userMail, DateTime date)
+        {
+            try
+            {
+                var dayDetails = _workdayCRUD.GetDayDetails(userMail, date);
+                return Ok(dayDetails);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = "An error occurred while fetching the day's details.", error = ex.Message });
+            }
+        }
+        [HttpGet("user/day/info/{date}")]
+        [Authorize(Roles = Roles.Admin + "," + Roles.User)]
+        public IActionResult GetUserDayDetails(DateTime date)
+        {
+            try
+            {
+                var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ;
+              
+                var dayDetails = _workdayCRUD.GetDayDetailsForLoggedUser(int.Parse(userId), date);
+                return Ok(dayDetails);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = "An error occurred while fetching the day's details.", error = ex.Message });
+            }
+        }
     }
 }

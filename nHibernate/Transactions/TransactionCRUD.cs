@@ -253,7 +253,7 @@ namespace FirmTracker_Server.nHibernate.Transactions
                 catch (Exception ex)
                 {
                     transaction.Rollback();
-                    throw ex;
+                    throw;
                 }
             }
         }
