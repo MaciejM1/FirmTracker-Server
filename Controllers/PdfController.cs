@@ -20,11 +20,13 @@ namespace FirmTracker_Server.Controllers
     {
         private readonly IExpenseRepository _expenseRepository;
         private readonly ITransactionRepository _transactionRepository;
+        private readonly IProductRepository _productRepository;
 
-        public PdfController(IExpenseRepository expenseRepository, ITransactionRepository transactionRepository)
+        public PdfController(IExpenseRepository expenseRepository, ITransactionRepository transactionRepository, IProductRepository productRepository)
         {
             _expenseRepository = expenseRepository;
             _transactionRepository = transactionRepository;
+            _productRepository = productRepository;
         }
 
         [HttpGet("download")]
@@ -112,8 +114,9 @@ namespace FirmTracker_Server.Controllers
                         // Main header
                         page.Header()
                             .Text("Raport transakcji")
-                            .FontSize(20)
+                            .FontSize(22)
                             .SemiBold()
+                            .FontColor(Colors.Blue.Medium)
                             .AlignCenter();
 
                         // Summary section
@@ -122,16 +125,18 @@ namespace FirmTracker_Server.Controllers
                             column.Spacing(10);
 
                             column.Item().Text($"Transakcje od ({startDate:yyyy-MM-dd} do {endDate:yyyy-MM-dd})")
-                                .FontSize(16).Underline();
+                                .FontSize(16)
+                                .Underline()
+                                .FontColor(Colors.Grey.Medium);
 
                             // Add table header
                             column.Item().Row(row =>
                             {
-                                row.RelativeItem().Text("Data").SemiBold();
-                                row.RelativeItem().Text("Typ płatności").SemiBold();
-                                row.RelativeItem().Text("Kwota razem").SemiBold();
-                                row.RelativeItem().Text("Rabat").SemiBold();
-                                row.RelativeItem().Text("Opis").SemiBold();
+                                row.RelativeItem().Text("Data").SemiBold().FontColor(Colors.Blue.Darken1);
+                                row.RelativeItem().Text("Typ płatności").SemiBold().FontColor(Colors.Blue.Darken1);
+                                row.RelativeItem().Text("Kwota razem").SemiBold().FontColor(Colors.Blue.Darken1);
+                                row.RelativeItem().Text("Rabat").SemiBold().FontColor(Colors.Blue.Darken1);
+                                row.RelativeItem().Text("Opis").SemiBold().FontColor(Colors.Blue.Darken1);
                             });
 
                             // Populate table rows with transaction data
@@ -153,13 +158,15 @@ namespace FirmTracker_Server.Controllers
 
                                 if (products.Any())
                                 {
-                                    column.Item().Text("Produkty:").SemiBold();
+                                    column.Item().Text("Produkty:").SemiBold().FontColor(Colors.Blue.Medium);
                                     foreach (var product in products)
                                     {
+                                        var productQuery = _productRepository.GetProduct(product.Id);
                                         column.Item().Row(productRow =>
                                         {
-                                            productRow.RelativeItem().Text($"Nazwa produktu: {product.ProductName}");
+                                            productRow.RelativeItem().Text($"Nazwa produktu: {productQuery.Name}");
                                             productRow.RelativeItem().Text($"Ilość: {product.Quantity}");
+                                            productRow.RelativeItem().Text($"Cena 1 szt. bez rabatu: {productQuery.Price.ToString("F2")}");
                                         });
                                     }
                                 }
@@ -171,8 +178,8 @@ namespace FirmTracker_Server.Controllers
                             .AlignCenter()
                             .Text(text =>
                             {
-                                text.Span("Wygenerowano przez automat FT: ");
-                                text.Span(DateTime.Now.ToString("yyyy-MM-dd")).SemiBold();
+                                text.Span("Wygenerowano przez automat FT: ").FontColor(Colors.Grey.Medium);
+                                text.Span(DateTime.Now.ToString("yyyy-MM-dd")).SemiBold().FontColor(Colors.Grey.Medium);
                             });
                     });
                 }).GeneratePdf(ms);
@@ -200,8 +207,9 @@ namespace FirmTracker_Server.Controllers
                         // Main header
                         page.Header()
                             .Text("Raport wydatków")
-                            .FontSize(20)
+                            .FontSize(22)
                             .SemiBold()
+                            .FontColor(Colors.Green.Medium)
                             .AlignCenter();
 
                         // Summary section
@@ -211,18 +219,20 @@ namespace FirmTracker_Server.Controllers
 
                             column.Item().Row(row =>
                             {
-                                row.RelativeItem().Text($"Łączne wydatki: {totalExpenses:C}").FontSize(14).Bold();
-                                row.RelativeItem().Text($"Średnie wydatki dzienne: {averageExpense:C}").FontSize(14).Bold();
+                                row.RelativeItem().Text($"Łączne wydatki: {totalExpenses:C}").FontSize(14).Bold().FontColor(Colors.Green.Darken1);
+                                row.RelativeItem().Text($"Średnie wydatki dzienne: {averageExpense:C}").FontSize(14).Bold().FontColor(Colors.Green.Darken1);
                             });
 
                             column.Item().Text($"Szczegóły wydatków od ({startDate:yyyy-MM-dd} do {endDate:yyyy-MM-dd})")
-                                .FontSize(16).Underline();
+                                .FontSize(16)
+                                .Underline()
+                                .FontColor(Colors.Grey.Medium);
 
                             column.Item().Row(row =>
                             {
-                                row.RelativeItem().Text("Data").SemiBold();
-                                row.RelativeItem().Text("Kwota").SemiBold();
-                                row.RelativeItem().Text("Opis").SemiBold();
+                                row.RelativeItem().Text("Data").SemiBold().FontColor(Colors.Green.Darken1);
+                                row.RelativeItem().Text("Kwota").SemiBold().FontColor(Colors.Green.Darken1);
+                                row.RelativeItem().Text("Opis").SemiBold().FontColor(Colors.Green.Darken1);
                             });
 
                             foreach (var expense in expenses)
@@ -236,12 +246,13 @@ namespace FirmTracker_Server.Controllers
                             }
                         });
 
+                        // Footer with generation date
                         page.Footer()
                             .AlignCenter()
                             .Text(text =>
                             {
-                                text.Span("Wygenerowano przez automat FT: ");
-                                text.Span(DateTime.Now.ToString("yyyy-MM-dd")).SemiBold();
+                                text.Span("Wygenerowano przez automat FT: ").FontColor(Colors.Grey.Medium);
+                                text.Span(DateTime.Now.ToString("yyyy-MM-dd")).SemiBold().FontColor(Colors.Grey.Medium);
                             });
                     });
                 }).GeneratePdf(ms);
@@ -249,5 +260,7 @@ namespace FirmTracker_Server.Controllers
                 return ms.ToArray();
             }
         }
+
+
     }
 }

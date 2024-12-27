@@ -147,7 +147,7 @@ namespace FirmTracker_Server.Controllers
         {
             try
             {
-                var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ;
+                var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
               
                 var dayDetails = _workdayCRUD.GetDayDetailsForLoggedUser(int.Parse(userId), date);
                 return Ok(dayDetails);

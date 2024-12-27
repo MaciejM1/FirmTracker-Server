@@ -1,11 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Transactions;
 using FirmTracker_Server.nHibernate.Expenses;
+using FirmTracker_Server.nHibernate.Products;
 using FirmTracker_Server.nHibernate.Transactions;
 using NHibernate;
+using Transaction = FirmTracker_Server.nHibernate.Transactions.Transaction;
 
 namespace FirmTracker_Server.nHibernate
 {
+    public interface IProductRepository
+    {
+        Product GetProduct(int id);
+    }
+
     public interface IExpenseRepository
     {
         List<Expense> GetAllExpenses();
@@ -25,6 +33,17 @@ namespace FirmTracker_Server.nHibernate
         void DeleteTransaction(int transactionId);
         List<TransactionProduct> GetTransactionProductsForTransactions(List<int> transactionIds);
     }
+    public class ProductRepository : IProductRepository
+    {
+        public Product GetProduct(int id)
+        {
+            using (var session = SessionFactory.OpenSession())
+            {
+                return session.Get<Product>(id);
+            }
+        }
+    }
+
     public class TransactionRepository : ITransactionRepository
     {
         // Retrieve all transactions

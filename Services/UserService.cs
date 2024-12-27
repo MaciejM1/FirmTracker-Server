@@ -15,6 +15,8 @@ using szyfrowanie;
 using FirmTracker_Server.nHibernate;
 using NHibernate;
 using NHibernate.Criterion;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using NHibernate.Type;
 
 namespace FirmTracker_Server.Services
 {
@@ -24,6 +26,7 @@ namespace FirmTracker_Server.Services
         int AddUser(CreateUserDto dto);
         string CreateTokenJwt(LoginDto dto);
         IEnumerable<string> GetAllUserEmails();
+        bool UpdatePassword(UpdatePasswordDto dto);
     }
 
     public class UserService : IUserService
@@ -43,6 +46,10 @@ namespace FirmTracker_Server.Services
             AuthenticationSettings = authenticationSettings;
             SimplerAES = new SimplerAES();
             //SessionFactory = sessionFactory;
+        }
+        public bool UpdatePassword(UpdatePasswordDto dto)
+        {
+            return true;
         }
         public IEnumerable<string> GetAllUserEmails()
         {

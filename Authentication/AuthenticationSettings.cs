@@ -2,8 +2,8 @@
 {
     public class AuthenticationSettings
     {
-        public string JwtSecKey { get; set; }
+        public  string JwtSecKey { get; set; }
         public int JwtExpireDays { get; set; }
-        public string JwtIssuer { get; set; }
+        public  string JwtIssuer { get; set; }
     }
 }
