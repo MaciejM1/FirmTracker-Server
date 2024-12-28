@@ -37,6 +37,8 @@ using FirmTracker_Server.Middleware;
 using FirmTracker_Server.Services;
 using System.Reflection;
 using FirmTracker_Server.Mappings;
+using NuGet.Packaging;
+
 
 
 namespace FirmTracker_Server
@@ -44,10 +46,10 @@ namespace FirmTracker_Server
     internal static class Program
     {
 
-        public static async Task Main(string[] args)
+        public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            string appDirectory = Directory.GetCurrentDirectory();        
+            string appDirectory = Directory.GetCurrentDirectory();
             string configFilePath = Path.Combine(appDirectory, "appsettings.json");
             string connectionString = "";
             if (File.Exists(configFilePath))
@@ -59,7 +61,7 @@ namespace FirmTracker_Server
                 var connectionstringsection = config.GetSection("AppSettings:ConnectionString");
 
                 connectionString = connectionstringsection.Value;
-
+                //Console.WriteLine(connectionString);
                 SessionFactory.Init(connectionString);
             }
             else
@@ -69,7 +71,8 @@ namespace FirmTracker_Server
 
             TestClass test = new TestClass();
             test.AddTestProduct();
-         
+            QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
+
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowSpecificOrigin",
@@ -84,7 +87,7 @@ namespace FirmTracker_Server
                 {
                     options.JsonSerializerOptions.Converters.Add(new DateTimeConverter());
                 });
-                ;
+            ;
             builder.ConfigureAuthentication();
             builder.Services.AddAuthorization();
             builder.Services.AddEndpointsApiExplorer();
@@ -101,18 +104,18 @@ namespace FirmTracker_Server
               .AddJsonFile("appsettings.json")
               .Build();
 
-       
-            var port = configSwagger.GetValue<int>("Port", 5075); 
+
+            var port = configSwagger.GetValue<int>("Port", 5075);
             var port2 = configSwagger.GetValue<int>("Port", 7039);
-            app.Urls.Add($"http://*:{port}");  
-            app.Urls.Add($"https://*:{port2}");
-         
+            app.Urls.Add($"http://*:{port}");
+             app.Urls.Add($"https://*:{port2}");
+
             try
             {
                 app.UseSwagger();
                 app.UseSwaggerUI(c =>
                 {
-                    c.SwaggerEndpoint($"/swagger/v1/swagger.json", "FirmTracker - TEST"); 
+                    c.SwaggerEndpoint($"/swagger/v1/swagger.json", "FirmTracker - TEST");
                     c.RoutePrefix = "swagger";
                 });
                 Console.WriteLine("uruchomiono swaggera");
@@ -122,6 +125,7 @@ namespace FirmTracker_Server
             {
                 Console.WriteLine("Nie uda³o siê uruchomiæ swaggera");
             }
+
             app.UseHttpsRedirection();
 
             app.UseCors("AllowSpecificOrigin");
@@ -130,7 +134,7 @@ namespace FirmTracker_Server
             app.UseAuthentication();
             app.UseAuthorization();
 
-      
+
             app.MapControllers();
 
             var configuration = new Configuration();
@@ -173,6 +177,9 @@ namespace FirmTracker_Server
             services.AddScoped<IUserService, UserService>();          
             services.AddScoped<ErrorHandling>();      
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+            services.AddScoped<IExpenseRepository, ExpenseRepository>();
+            services.AddScoped<ITransactionRepository, TransactionRepository>();
+           // services.AddScoped<IWorkdayRepository, WorkdayRepository>();
             services.AddMvc();
         }
 

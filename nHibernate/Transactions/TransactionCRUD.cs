@@ -94,6 +94,10 @@ namespace FirmTracker_Server.nHibernate.Transactions
                     {
                         var product = session.Get<Product>(tp.ProductID);
                         
+                        if(tp.Quantity < 0)
+                        {
+                            
+                        }
                         if (product.Type != 0)
                         {
                             product.Availability += tp.Quantity;
@@ -250,6 +254,63 @@ namespace FirmTracker_Server.nHibernate.Transactions
                 {
                     transaction.Rollback();
                     throw ex;
+                }
+            }
+        }
+        public void DeleteTransactionProduct(int transactionId, int productId)
+        {
+            using (var session = SessionFactory.OpenSession())
+            using (var t = session.BeginTransaction())
+            {
+                try
+                {
+                    // Get the transaction to update
+                    var transaction = session.Get<Transaction>(transactionId);
+                    if (transaction == null)
+                    {
+                        throw new InvalidOperationException($"Transaction with ID {transactionId} not found.");
+                    }
+
+                    // Find the transaction product to remove
+                    var transactionProduct = transaction.TransactionProducts.FirstOrDefault(tp => tp.ProductID == productId);
+                    if (transactionProduct == null)
+                    {
+                        throw new InvalidOperationException($"Product with ID {productId} not found in the transaction.");
+                    }
+
+                    // Get the product to update availability
+                    var product = session.Get<Product>(productId);
+                    if (product == null)
+                    {
+                        throw new InvalidOperationException($"Product with ID {productId} not found.");
+                    }
+
+                    // Revert the product availability
+                    if (product.Type != 0)
+                    {
+                        product.Availability += transactionProduct.Quantity;
+                        session.Update(product);
+                    }
+
+                    // Remove the product from the transaction
+                    transaction.TotalPrice = (transaction.TotalPrice * (1 + (transaction.Discount / 100))) - (transactionProduct.Quantity * product.Price );
+                    transaction.TotalPrice = Math.Round(transaction.TotalPrice, 2, MidpointRounding.AwayFromZero);
+
+                    // Remove the product from the Transaction's Product list
+                    transaction.TransactionProducts.Remove(transactionProduct);
+
+                    // Now delete the transaction product
+                    session.Delete(transactionProduct);
+
+                    // Update the transaction total price
+                    session.Update(transaction);
+
+                    t.Commit();
+                }
+                catch (Exception ex)
+                {
+                    t.Rollback();
+                    throw new InvalidOperationException($"Error while deleting product from transaction: {ex.Message}");
                 }
             }
         }

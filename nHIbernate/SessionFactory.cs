@@ -55,7 +55,8 @@ namespace FirmTracker_Server.nHibernate
                     .AddFromAssemblyOf<Reports.ReportTransactionMapping>()
                     .AddFromAssemblyOf<Reports.ReportExpenseMapping>()
                     .AddFromAssemblyOf<LogsMapping>()
-                    .AddFromAssemblyOf<UserMapping>();
+                    .AddFromAssemblyOf<UserMapping>()
+                    .AddFromAssemblyOf<WorkdayMapping>();
                     
                 })
                 .ExposeConfiguration(cfg => new SchemaExport(cfg).Create(true, true))  //SchemaUpdate . Execute  dla only update

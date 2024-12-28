@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net8.0-windows</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>FirmTracker_Server</RootNamespace>
@@ -29,7 +29,9 @@
     <PackageReference Include="NLog" Version="5.3.4" />
     <PackageReference Include="NLog.Database" Version="5.3.4" />
     <PackageReference Include="NSwag.Annotations" Version="14.0.7" />
+
     <PackageReference Include="nunit" Version="4.2.2" />
+
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.1.2" />
@@ -37,7 +39,7 @@
 
   <ItemGroup>
     <Reference Include="szyfrowanie">
-      <HintPath>..\..\..\Desktop\szyfrowanie.dll</HintPath>
+      <HintPath>./szyfrowanie.dll</HintPath>
     </Reference>
   </ItemGroup>
 
