@@ -76,8 +76,23 @@ namespace FirmTracker_Server.Controllers
             }
         }
 
+        [HttpGet("user/workdays")]
+        [Authorize(Roles = Roles.Admin + "," + Roles.User)]
+        public IActionResult GetWorkdaysLoggedUser()
+        {
+            try
+            {
+                var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
-        
+                var workdays = _workdayCRUD.GetWorkdaysByLoggedUser(userId);
+                return Ok(workdays);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = "An error occurred while fetching workdays.", error = ex.Message });
+            }
+        }
+
         // Endpoint to get all workdays for a user
         [HttpGet("user/{userMail}/workdays")]
         [Authorize(Roles = Roles.Admin + "," + Roles.User)]

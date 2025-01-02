@@ -186,8 +186,8 @@ namespace FirmTracker_Server
 
                     //SessionFactory.Init(connectionString);
 
-                    string queryUser = "insert into Users(Email,PassHash,Role) select '123@wp.pl', 'GOsGemJarMJu8btZKF6Rung27JLZkdO7Wfd4CwLhL1k=','User'";
-                    string queryAdmin = "insert into Users(Email,PassHash,Role) select '321@wp.pl', 'GOsGemJarMJu8btZKF6Rung27JLZkdO7Wfd4CwLhL1k=','Admin'";
+                    string queryUser = "insert into Users(Email,PassHash,Role) select '123@wp.pl', 'AQAAAAIAAYagAAAAEMQUuFPUNAddMmuZpCUAZpaDR31+BqMJhnamIAllDi+aTBJQ7tEtLuEMppgz0oLYyw==','User'";
+                    string queryAdmin = "insert into Users(Email,PassHash,Role) select '321@wp.pl', 'AQAAAAIAAYagAAAAEMQUuFPUNAddMmuZpCUAZpaDR31+BqMJhnamIAllDi+aTBJQ7tEtLuEMppgz0oLYyw==','Admin'";
 
                    
                     SqlConnection connection = new SqlConnection(connectionString);
@@ -237,72 +237,7 @@ namespace FirmTracker_Server
                 expenseCrud.AddExpense(expense1);
                 expenseCrud.AddExpense(expense2);
                 expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
-                expenseCrud.AddExpense(expense3);
+
 
 
                 List<TransactionProduct> testTransactionProducts = new List<TransactionProduct>  {

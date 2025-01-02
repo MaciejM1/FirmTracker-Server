@@ -3,15 +3,12 @@ using FirmTracker_Server.Authentication;
 using FirmTracker_Server.Entities;
 using FirmTracker_Server.Exceptions;
 using FirmTracker_Server.Models;
-using FirmTracker_Server.Authentication;
-using FirmTracker_Server.Exceptions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using szyfrowanie;
 using FirmTracker_Server.nHibernate;
 using NHibernate;
 using NHibernate.Criterion;
@@ -27,29 +24,84 @@ namespace FirmTracker_Server.Services
         string CreateTokenJwt(LoginDto dto);
         IEnumerable<string> GetAllUserEmails();
         bool UpdatePassword(UpdatePasswordDto dto);
+        bool ChangeUserPassword(ChangeUserPasswordDto dto);
     }
 
     public class UserService : IUserService
     {
-       // private readonly GeneralDbContext DbContext;
+        // private readonly GeneralDbContext DbContext;
         private readonly IMapper Mapper;
         private readonly IPasswordHasher<User> PasswordHasher;
         private readonly AuthenticationSettings AuthenticationSettings;
-       private readonly SimplerAES SimplerAES;
+        // private readonly SimplerAES SimplerAES;
         //private readonly SessionFactory sessionFactory;
 
-        public UserService( IMapper mapper, IPasswordHasher<User> passwordHasher, AuthenticationSettings authenticationSettings)
+        public UserService(IMapper mapper, IPasswordHasher<User> passwordHasher, AuthenticationSettings authenticationSettings)
         {
-           // DbContext = dbContext;
+            // DbContext = dbContext;
             Mapper = mapper;
             PasswordHasher = passwordHasher;
             AuthenticationSettings = authenticationSettings;
-            SimplerAES = new SimplerAES();
+            ///SimplerAES = new SimplerAES();
             //SessionFactory = sessionFactory;
+        }
+        public bool ChangeUserPassword(ChangeUserPasswordDto dto)
+        {
+            using (var session = SessionFactory.OpenSession())
+            using (var transaction = session.BeginTransaction())
+            {
+                try
+                {
+                    var user = session.Query<User>().FirstOrDefault(u => u.Email == dto.email);
+                    if (user == null)
+                    {
+                        throw new Exception("User not found.");
+                    }
+
+                    user.PassHash = PasswordHasher.HashPassword(user, dto.password);
+                    session.Update(user);
+                    transaction.Commit();
+
+                    return true;
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw;
+                }
+            }
         }
         public bool UpdatePassword(UpdatePasswordDto dto)
         {
-            return true;
+            using (var session = SessionFactory.OpenSession())
+            using (var transaction = session.BeginTransaction())
+            {
+                try
+                {
+                    var user = session.Query<User>().FirstOrDefault(u => u.Email == dto.email);
+                    if (user == null)
+                    {
+                        throw new Exception("User not found.");
+                    }
+
+                    var result = PasswordHasher.VerifyHashedPassword(user, user.PassHash, dto.oldPassword);
+                    if (result != PasswordVerificationResult.Success)
+                    {
+                        throw new Exception("Invalid current password.");
+                    }
+
+                    user.PassHash = PasswordHasher.HashPassword(user, dto.newPassword);
+                    session.Update(user);
+                    transaction.Commit();
+
+                    return true;
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw;
+                }
+            }
         }
         public IEnumerable<string> GetAllUserEmails()
         {
@@ -74,7 +126,7 @@ namespace FirmTracker_Server.Services
             var user = Mapper.Map<User>(dto);
 
             // Encrypt or hash the password based on NewEncryption flag
-            user.PassHash = dto.NewEncryption ? SimplerAES.Encrypt(dto.Password) : PasswordHasher.HashPassword(user, dto.Password);
+            user.PassHash = dto.NewEncryption ? PasswordHasher.HashPassword(user, dto.Password) : PasswordHasher.HashPassword(user, dto.Password);
             user.Role = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(dto.Role.ToLower());
 
             using (var session = SessionFactory.OpenSession())
@@ -119,9 +171,9 @@ namespace FirmTracker_Server.Services
                 {
                     try
                     {
-                        Console.WriteLine(SimplerAES.Decrypt(user.PassHash)+" "+SimplerAES.Decrypt(dto.Password));
-                        var ready = SimplerAES.Decrypt(user.PassHash) == SimplerAES.Decrypt(dto.Password);
-                        if (!ready)
+                        Console.WriteLine(PasswordHasher.HashPassword(user, user.PassHash));
+                        var ready = PasswordHasher.VerifyHashedPassword(user, user.PassHash, dto.Password);
+                        if (ready == 0)
                         {
                             throw new WrongUserOrPasswordException("Nieprawidłowy login lub hasło.");
                         }
@@ -134,7 +186,7 @@ namespace FirmTracker_Server.Services
                 else
                 {
                     var ready = PasswordVerificationResult.Failed;
-                    if (SimplerAES.Decrypt(user.PassHash) == SimplerAES.Decrypt(dto.Password)) { ready = PasswordVerificationResult.Success; } //PasswordHasher.VerifyHashedPassword(user, user.PassHash, dto.Password);
+                    if (PasswordHasher.VerifyHashedPassword(user, user.PassHash, dto.Password) == PasswordVerificationResult.Success) { ready = PasswordVerificationResult.Success; } //PasswordHasher.VerifyHashedPassword(user, user.PassHash, dto.Password);
                     if (ready == PasswordVerificationResult.Failed)
                     {
                         throw new WrongUserOrPasswordException("Nieprawidłowy login lub hasło.");

@@ -1,4 +1,20 @@
-﻿using FirmTracker_Server.Models;
+﻿/*
+ * This file is part of FirmTracker - Server.
+ *
+ * FirmTracker - Server is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * FirmTracker - Server is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with FirmTracker - Server. If not, see <https://www.gnu.org/licenses/>.
+ */
+using FirmTracker_Server.Models;
 using FirmTracker_Server.Services;
 using FirmTracker_Server;
 using Microsoft.AspNetCore.Authorization;
@@ -6,11 +22,14 @@ using Microsoft.AspNetCore.Mvc;
 using FirmTracker_Server.Entities;
 using System.Security.Claims;
 
+using System.Security.Cryptography;
+using System.Text;
+
 namespace FirmTracker_Server.Controllers
 {
     [Route("api/user")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class UserController : ControllerBase
     {
         private readonly IUserService UserService;
@@ -21,7 +40,7 @@ namespace FirmTracker_Server.Controllers
         }
 
         [HttpPost("create")]
-        [Authorize(Roles = Roles.Admin)]
+        //[Authorize(Roles = Roles.Admin)]
         public ActionResult CreateUser([FromBody] CreateUserDto dto)
         {
             if (!ModelState.IsValid)
@@ -62,6 +81,51 @@ namespace FirmTracker_Server.Controllers
 
             return Ok(emails);
         }
+        [HttpPost("ChangeUserPassword")]
+        [Authorize(Roles = Roles.Admin)]
+        public ActionResult ChangeUserPassword([FromBody] ChangeUserPasswordDto dto)
+        {
+            try
+            {
+                var result = UserService.ChangeUserPassword(dto);
+                if (result)
+                {
+                    return Ok("Password changed successfully.");
+                }
+                else
+                {
+                    return BadRequest("Failed to change the password.");
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"An error occurred: {ex.Message}");
+            }
+        }
+        [HttpPost("changePassword")]
+        [Authorize(Roles = Roles.Admin + "," + Roles.User)]
+        public ActionResult ChangePassword([FromBody] UpdatePasswordDto dto)
+        {
+            try
+            {
+                var result = UserService.UpdatePassword(dto);
+                if (result)
+                {
+                    var loginDto = new LoginDto { Email = dto.email, Password = dto.newPassword };
+                    var token = UserService.CreateTokenJwt(loginDto);
+                    return Ok(new { Token = token });
+                }
+                else
+                {
+                    return BadRequest("Failed to change the password.");
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"An error occurred: {ex.Message}");
+            }
+        }
+
         // New method to get all users
         /* [HttpGet("all")]
          [AllowAnonymous]
