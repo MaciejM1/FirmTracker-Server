@@ -29,7 +29,7 @@ namespace FirmTracker_Server.Controllers
 {
     [Route("api/user")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class UserController : ControllerBase
     {
         private readonly IUserService UserService;
@@ -40,7 +40,7 @@ namespace FirmTracker_Server.Controllers
         }
 
         [HttpPost("create")]
-        //[Authorize(Roles = Roles.Admin)]
+        [Authorize(Roles = Roles.Admin)]
         public ActionResult CreateUser([FromBody] CreateUserDto dto)
         {
             if (!ModelState.IsValid)
