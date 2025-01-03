@@ -119,7 +119,6 @@ namespace FirmTracker_Server.Controllers
                     return BadRequest(new { message = "User email must be provided." });
                 }
 
-                // Fetch the userId based on the provided email
                 int userId;
                 using (var session = SessionFactory.OpenSession())
                 {
@@ -131,7 +130,6 @@ namespace FirmTracker_Server.Controllers
                     userId = user.UserId;
                 }
 
-                // Add the absence for the retrieved userId
                 _workdayCRUD.AddAbsence(userId, dto.AbsenceType, dto.StartTime, dto.EndTime);
 
                 return Ok(new { status = "added", userId, dto.userEmail, absenceType = dto.AbsenceType });

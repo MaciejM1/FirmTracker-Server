@@ -42,7 +42,7 @@ namespace FirmTracker_Server.Controllers
         [HttpPost]
         [ProducesResponseType(200)] // Created
         [ProducesResponseType(400)] // Bad Request
-        [Authorize(Roles = Roles.Admin)]
+        [Authorize(Roles = Roles.Admin + "," + Roles.User)]
         public IActionResult CreateProduct([FromBody] Product product)
         {
             try
@@ -153,7 +153,7 @@ namespace FirmTracker_Server.Controllers
         [HttpDelete("{id}")]
         [ProducesResponseType(200)] // Created
         [ProducesResponseType(400)] // Bad Request
-        [Authorize(Roles = Roles.Admin)]
+        [Authorize(Roles = Roles.Admin + "," + Roles.User)]
         public IActionResult DeleteProduct(int id)
         {
             try
