@@ -76,8 +76,23 @@ namespace FirmTracker_Server.Controllers
             }
         }
 
+        [HttpGet("user/workdays")]
+        [Authorize(Roles = Roles.Admin + "," + Roles.User)]
+        public IActionResult GetWorkdaysLoggedUser()
+        {
+            try
+            {
+                var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
-        
+                var workdays = _workdayCRUD.GetWorkdaysByLoggedUser(userId);
+                return Ok(workdays);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = "An error occurred while fetching workdays.", error = ex.Message });
+            }
+        }
+
         // Endpoint to get all workdays for a user
         [HttpGet("user/{userMail}/workdays")]
         [Authorize(Roles = Roles.Admin + "," + Roles.User)]
@@ -104,7 +119,6 @@ namespace FirmTracker_Server.Controllers
                     return BadRequest(new { message = "User email must be provided." });
                 }
 
-                // Fetch the userId based on the provided email
                 int userId;
                 using (var session = SessionFactory.OpenSession())
                 {
@@ -116,7 +130,6 @@ namespace FirmTracker_Server.Controllers
                     userId = user.UserId;
                 }
 
-                // Add the absence for the retrieved userId
                 _workdayCRUD.AddAbsence(userId, dto.AbsenceType, dto.StartTime, dto.EndTime);
 
                 return Ok(new { status = "added", userId, dto.userEmail, absenceType = dto.AbsenceType });
@@ -127,6 +140,35 @@ namespace FirmTracker_Server.Controllers
             }
         }
 
-
+        [HttpGet("user/{userMail}/day/info/{date}")]
+        [Authorize(Roles = Roles.Admin + "," + Roles.User)]
+        public IActionResult GetUserDayDetailsByMail(string userMail, DateTime date)
+        {
+            try
+            {
+                var dayDetails = _workdayCRUD.GetDayDetails(userMail, date);
+                return Ok(dayDetails);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = "An error occurred while fetching the day's details.", error = ex.Message });
+            }
+        }
+        [HttpGet("user/day/info/{date}")]
+        [Authorize(Roles = Roles.Admin + "," + Roles.User)]
+        public IActionResult GetUserDayDetails(DateTime date)
+        {
+            try
+            {
+                var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+              
+                var dayDetails = _workdayCRUD.GetDayDetailsForLoggedUser(int.Parse(userId), date);
+                return Ok(dayDetails);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = "An error occurred while fetching the day's details.", error = ex.Message });
+            }
+        }
     }
 }

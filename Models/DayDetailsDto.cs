@@ -14,12 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with FirmTracker - Server. If not, see <https://www.gnu.org/licenses/>.
  */
+using FirmTracker_Server.nHibernate;
+
 namespace FirmTracker_Server.Models
 {
-    public class LoginDto
+    public class DayDetailsDto
     {
-        public string Email { get; set; }
-        public string Password { get; set; }
-
+        public required string Email { get; set; }
+        public DateTime Date { get; set; }
+        public required string TotalWorkedHours { get; set; }
+        public required List<Workday> WorkdayDetails { get; set; }
     }
 }

@@ -16,10 +16,12 @@
  */
 namespace FirmTracker_Server.Models
 {
-    public class LoginDto
+    public class UpdatePasswordDto
     {
-        public string Email { get; set; }
-        public string Password { get; set; }
+        public string email { get; set; }
+        public string oldPassword { get; set; }
+        public string newPassword { get; set; }
+
 
     }
 }

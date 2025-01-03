@@ -42,7 +42,7 @@ namespace FirmTracker_Server.Controllers
         [HttpPost]
         [ProducesResponseType(200)] // Created
         [ProducesResponseType(400)] // Bad Request
-        [Authorize(Roles = Roles.Admin)]
+        [Authorize(Roles = Roles.Admin + "," + Roles.User)]
         public IActionResult CreateProduct([FromBody] Product product)
         {
             try
@@ -62,6 +62,11 @@ namespace FirmTracker_Server.Controllers
                 if (product.Price < 0)
                 {
                     throw new InvalidOperationException("Produkt nie może posiadać ujemnej ceny.");
+                }
+                var productByName = _productCrud.GetProductByName(product.Name);
+                if (productByName != null)
+                {
+                    throw new InvalidOperationException("Produkt o podanej nazwie już istnieje.");
                 }
 
                 _productCrud.AddProduct(product);
@@ -148,7 +153,7 @@ namespace FirmTracker_Server.Controllers
         [HttpDelete("{id}")]
         [ProducesResponseType(200)] // Created
         [ProducesResponseType(400)] // Bad Request
-        [Authorize(Roles = Roles.Admin)]
+        [Authorize(Roles = Roles.Admin + "," + Roles.User)]
         public IActionResult DeleteProduct(int id)
         {
             try

@@ -1,5 +1,7 @@
 ﻿using FirmTracker_Server.Entities;
 using FirmTracker_Server.nHibernate;
+using static NHibernate.Engine.Query.CallableParser;
+using FirmTracker_Server.Models;
 
 public class WorkdayRepository
 {
@@ -115,6 +117,131 @@ public class WorkdayRepository
             {
                 var workdays = session.Query<Workday>()
                     .Where(w => w.User.Email == email)
+                    .Select(w => new Workday
+                    {
+                        Id = w.Id,
+                        StartTime = w.StartTime,
+                        EndTime = w.EndTime ?? DateTime.Today.AddHours(17),
+                        WorkedHours = (w.EndTime ?? DateTime.Today.AddHours(17)) - w.StartTime,
+                        Absence = w.Absence,
+                    })
+                    .ToList();
+
+                foreach (var workday in workdays)
+                {
+                    if(workday.Absence!="")
+                    {
+                        workday.WorkedHours = TimeSpan.Zero;
+                    }
+                }
+
+                return workdays;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while fetching workdays", ex);
+            }
+        }
+    }
+    public DayDetailsDto GetDayDetails(string mail, DateTime date)
+    {
+        using (var session = SessionFactory.OpenSession())
+        {
+            try
+            {
+                // Fetch workdays for the specified user on the given date
+                var startOfDay = date.Date;
+                var endOfDay = startOfDay.AddDays(1);
+
+                var workdays = session.Query<Workday>()
+                    .Where(w => w.User.Email == mail && w.StartTime >= startOfDay && w.StartTime < endOfDay)
+                    .Select(w => new Workday
+                    {
+                        StartTime = w.StartTime,
+                        EndTime = w.EndTime ?? DateTime.Today.AddHours(17),
+                        Absence = w.Absence,
+                    })
+                    .ToList();
+
+                TimeSpan totalWorkedHours = TimeSpan.Zero;
+
+                // Calculate total worked hours and adjust if there's an absence
+                foreach (var workday in workdays)
+                {
+                    if (string.IsNullOrEmpty(workday.Absence))
+                    {
+                        totalWorkedHours += workday.WorkedHours;
+                    }
+                }
+
+                return new DayDetailsDto
+                {
+                    Email = mail,
+                    Date = date,
+                    TotalWorkedHours = totalWorkedHours.ToString(@"hh\:mm\:ss"),
+                    WorkdayDetails = workdays
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while fetching the day's details", ex);
+            }
+        }
+    }
+    public DayDetailsLoggedUserDto GetDayDetailsForLoggedUser(int userId, DateTime date)
+    {
+        using (var session = SessionFactory.OpenSession())
+        {
+            try
+            {
+                // Fetch workdays for the specified user on the given date
+                var startOfDay = date.Date;
+                var endOfDay = startOfDay.AddDays(1);
+
+                var workdays = session.Query<Workday>()
+                    .Where(w => w.User.UserId == userId && w.StartTime >= startOfDay && w.StartTime < endOfDay)
+                    .Select(w => new Workday
+                    {
+                        StartTime = w.StartTime,
+                        EndTime = w.EndTime ?? DateTime.Today.AddHours(17),
+                        Absence = w.Absence,
+                    })
+                    .ToList();
+
+                TimeSpan totalWorkedHours = TimeSpan.Zero;
+
+                // Calculate total worked hours and adjust if there's an absence
+                foreach (var workday in workdays)
+                {
+                    if (string.IsNullOrEmpty(workday.Absence))
+                    {
+                        totalWorkedHours += workday.WorkedHours;
+                    }
+                }
+
+                return new DayDetailsLoggedUserDto
+                {
+                    UserId = userId,
+                    Date = date,
+                    TotalWorkedHours = totalWorkedHours.ToString(@"hh\:mm\:ss"),
+                    WorkdayDetails = workdays
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while fetching the day's details", ex);
+            }
+        }
+    }
+    public List<Workday> GetWorkdaysByLoggedUser(string userId)
+    {
+        using (var session = SessionFactory.OpenSession())
+        {
+            try
+            {
+               int  parsedUserId = Int32.Parse(userId);
+                var workdays = session.Query<Workday>()
+                    .Where(w => w.User.UserId == parsedUserId)
                     .Select(w => new Workday
                     {
                         Id = w.Id,
