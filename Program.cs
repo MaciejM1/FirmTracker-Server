@@ -38,6 +38,7 @@ using FirmTracker_Server.Services;
 using System.Reflection;
 using FirmTracker_Server.Mappings;
 using NuGet.Packaging;
+using Microsoft.AspNetCore.DataProtection;
 
 
 
@@ -72,7 +73,7 @@ namespace FirmTracker_Server
             TestClass test = new TestClass();
             test.AddTestProduct();
             QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
-
+            builder.Services.AddDataProtection().DisableAutomaticKeyGeneration();
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowSpecificOrigin",
@@ -106,9 +107,9 @@ namespace FirmTracker_Server
 
 
             var port = configSwagger.GetValue<int>("Port", 5075);
-            var port2 = configSwagger.GetValue<int>("Port", 7039);
+           // var port2 = configSwagger.GetValue<int>("Port", 7039);
             app.Urls.Add($"http://*:{port}");
-             app.Urls.Add($"https://*:{port2}");
+           //  app.Urls.Add($"https://*:{port2}");
 
             try
             {
@@ -119,14 +120,14 @@ namespace FirmTracker_Server
                     c.RoutePrefix = "swagger";
                 });
                 Console.WriteLine("uruchomiono swaggera");
-                app.UseHttpsRedirection();
+              //  app.UseHttpsRedirection();
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Nie uda³o siê uruchomiæ swaggera");
             }
 
-            app.UseHttpsRedirection();
+          //  app.UseHttpsRedirection();
 
             app.UseCors("AllowSpecificOrigin");
 
