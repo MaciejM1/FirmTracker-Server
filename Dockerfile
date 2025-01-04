@@ -12,7 +12,7 @@ COPY . .
 
 
 # Copy the szyfrowanie.dll into the build directory (to ensure it's available during the build)
-COPY ["szyfrowanie.dll", "./"]
+#COPY ["szyfrowanie.dll", "./"]
 
 # Build the app
 RUN dotnet build "FirmTracker-Server.csproj" -c Release -o /app/build
@@ -31,7 +31,7 @@ EXPOSE 443
 COPY --from=publish /app/publish .
 
 # Copy the szyfrowanie.dll to the final image (if needed at runtime)
-COPY ["szyfrowanie.dll", "./"]
+#COPY ["szyfrowanie.dll", "./"]
 
 # Set the entry point for the container
 ENTRYPOINT ["dotnet", "FirmTracker-Server.dll"]
