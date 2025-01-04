@@ -15,29 +15,19 @@
  * along with FirmTracker - Server. If not, see <https://www.gnu.org/licenses/>.
  */
 
-using NHibernate;
 using NHibernate.Cfg;
-using NHibernate.Dialect;
-using NHibernate.Driver;
-using FirmTracker_Server.Controllers;
-using FirmTracker_Server.nHibernate.Products;
 using FirmTracker_Server.nHibernate;
 using FirmTracker_Server.Utilities.Converters;
 using FirmTracker_Server.Utilities.Swagger;
-using FluentValidation;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using AutoMapper;
-using Microsoft.AspNetCore.Authentication;
 using System.Text;
 using FirmTracker_Server.Entities;
 using FirmTracker_Server.Middleware;
 using FirmTracker_Server.Services;
 using System.Reflection;
 using FirmTracker_Server.Mappings;
-using NuGet.Packaging;
 using Microsoft.AspNetCore.DataProtection;
 
 
@@ -73,7 +63,7 @@ namespace FirmTracker_Server
             TestClass test = new TestClass();
             test.AddTestProduct();
             QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
-            builder.Services.AddDataProtection().DisableAutomaticKeyGeneration();
+            //builder.Services.AddDataProtection().DisableAutomaticKeyGeneration();
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowSpecificOrigin",
