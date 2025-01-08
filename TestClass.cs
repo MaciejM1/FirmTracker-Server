@@ -49,69 +49,53 @@ namespace FirmTracker_Server
             // SessionFactory.Init(ConnectionString);
 
 
-            var product2 = new nHibernate.Products.Product
-            {
-                Name = "Dostawa",
-                Description = "usługa dostawy",
-                Price = 7.50m,
-                Type = 0,
-                Availability = 0
-            };
-         
+           
+
             var products = new List<Product>
             {
-                CreateProduct("Tarta_truskawka", "produkt", 31.99m, 1, 20),
-                CreateProduct("Tarta_czekolada", "produkt", 30.99m, 1, 20),
-                CreateProduct("Tarta_agrest", "produkt", 32.90m, 1, 10),
-                CreateProduct("Tarta_pistacja", "produkt", 35.99m, 1, 15),
-                CreateProduct("Tarta_karmel", "produkt", 32.00m, 1, 15),
-                CreateProduct("Rolada_beza", "produkt", 21.00m, 1, 12),
-                CreateProduct("Rolada_róża", "produkt", 21.90m, 1, 10),
-                CreateProduct("Kostka_truskawka", "produkt", 12.00m, 1, 15),
-                CreateProduct("Kostka_lemonCurd", "produkt", 13.99m, 1, 15),
-                CreateProduct("Kostka_hiszpańska", "produkt", 11.99m, 1, 10),
-                CreateProduct("Kostka_wiosenna", "produkt", 11.99m, 1, 10),
-                CreateProduct("Kostka_jabłka", "produkt", 12.00m, 1, 15),
-                CreateProduct("Kostka_porzeczka", "produkt", 12.99m, 1, 10),
-                CreateProduct("Kostka_królewska", "produkt", 13.50m, 1, 20),
-                CreateProduct("Kostka_czekolada", "produkt", 14.50m, 1, 12),
-                CreateProduct("Kostka_wiśnia", "produkt", 12.50m, 1, 10),
-                CreateProduct("Kostka_beza", "produkt", 13.50m, 1, 20),
-                CreateProduct("Kostka_leśna", "produkt", 12.00m, 1, 20),
-                CreateProduct("Kostka_kawowa", "produkt", 12.00m, 1, 10),
-                CreateProduct("Kostka_galaretka", "produkt", 12.50m, 1, 25),
-                CreateProduct("Kostka_firmowa", "produkt", 12.50m, 1, 5),
-                CreateProduct("Sernik_wiśnia", "produkt", 33.00m, 1, 6),
-                CreateProduct("Sernik_truskawka", "produkt", 31.00m, 1, 5),
-                CreateProduct("Sernik_pistacja", "produkt", 38.90m, 1, 5),
-                CreateProduct("Sernik_fantazja", "produkt", 33.00m, 1, 7),
-                CreateProduct("Sernik_rafaello", "produkt", 33.00m, 1, 5),
-                CreateProduct("Sernik_nutella", "produkt", 35.50m, 1, 6),
-                CreateProduct("Sernik_mango", "produkt", 33.00m, 1, 5),
-                CreateProduct("Sernik_rabarbar", "produkt", 37.99m, 1, 5),
-                CreateProduct("Sernik_biszkopt", "produkt", 39.00m, 1, 11),
-                CreateProduct("Tartaletka", "produkt", 13.20m, 1, 30),
-                CreateProduct("Strudel_jabłko", "produkt", 29.00m, 1, 20),
-                CreateProduct("Placek_rabarbar", "produkt", 24.00m, 1, 18),
-                CreateProduct("Placek_jogurt", "produkt", 23.00m, 1, 13),
-                CreateProduct("Placek_śliwka", "produkt", 22.00m, 1, 14),
-                CreateProduct("Placek_maślany", "produkt", 18.00m, 1,11),
-                CreateProduct("Keks", "produkt", 22.00m, 1,11),
-                CreateProduct("Babka_drożdżowa", "produkt", 16.00m, 1,11),
-                CreateProduct("Pączek_pistacja", "produkt", 8.00m, 1,11),
-                CreateProduct("Pączek_marmolada", "produkt", 3.00m, 1,11),
-                CreateProduct("Pączek_nutella", "produkt", 4.50m, 1,11),
-                CreateProduct("Pączek_rafaello", "produkt", 4.50m, 1,11),
-                CreateProduct("Pączek_róża", "produkt", 4.00m, 1,11),
-                CreateProduct("Ekler", "produkt", 3.00m, 1,11),
-                CreateProduct("Ekler_słony_karmel", "produkt", 5.00m, 1,11),
-                CreateProduct("Ptyś", "produkt", 4.00m, 1,11),
-                CreateProduct("Drożdżówka_ser", "produkt", 4.00m, 1,11),
-                CreateProduct("Drożdżówka_rabarbar", "produkt", 5.00m, 1,11),
-                CreateProduct("Drożdżówka_żurawina", "produkt", 5.00m, 1,11),
-                CreateProduct("Drożdżówka_kruszonka", "produkt", 4.00m, 1,11),
-                CreateProduct("Drożdżówka_budyń", "produkt", 5.00m, 1,11),
-                CreateProduct("Jagodzianka", "produkt", 6.00m, 1,11),
+                CreateProduct("Bon Prezentowy 100","bon o zadanej wartości 100 zł",100,0,1),
+                CreateProduct("Bon Prezentowy 200","bon o zadanej wartości 200 zł",200,0,1),
+                CreateProduct("Bon Prezentowy 300","bon o zadanej wartości 300 zł",300,0,1),
+                CreateProduct("Bon Prezentowy 500","bon o zadanej wartości 500 zł",500,0,1),
+                CreateProduct("Bon Prezentowy 1000", "bon o zadanej wartości 1000 zł", 1000, 0, 1),
+                CreateProduct("Bon Prezentowy 2500", "bon o zadanej wartości 2500 zł", 2500, 0, 1),
+                CreateProduct("Henna brwi i rzęs + regulacja", "usługa", 50, 0, 1),
+                CreateProduct("Henna + regulacja", "usługa", 30, 0, 1),
+                CreateProduct("Henna rzęs", "usługa", 20, 0, 1),
+                CreateProduct("Regulacja", "usługa", 20, 0, 1),
+                CreateProduct("Peeling + ampułka + maska algowa", "usługa", 100, 0, 1),
+                CreateProduct("Pełne oczyszczanie twarzy z ultradźwiękami, mikrodermabrazją i algą", "usługa", 150, 0, 1),
+                CreateProduct("Kawitacyjne oczyszczanie twarzy z ampułką i algą", "usługa", 150, 0, 1),
+                CreateProduct("Oxybrazja tlenowa", "usługa", 150, 0, 1),
+                CreateProduct("Depilacja ciepłym woskiem - wąsik", "usługa", 15, 0, 1),
+                CreateProduct("Depilacja ciepłym woskiem - wąsik + broda", "usługa", 20, 0, 1),
+                CreateProduct("Depilacja ciepłym woskiem - nogi do kolan", "usługa", 50, 0, 1),
+                CreateProduct("Depilacja ciepłym woskiem - całe nogi", "usługa", 80, 0, 1),
+                CreateProduct("Depilacja ciepłym woskiem - bikini", "usługa", 50, 0, 1),
+                CreateProduct("Depilacja ciepłym woskiem - pachy", "usługa", 40, 0, 1),
+                CreateProduct("Depilacja ciepłym woskiem - rąk", "usługa", 50, 0, 1),
+                CreateProduct("Manicure z malowaniem lakierem", "usługa", 50, 0, 1),
+                CreateProduct("Manicure z hybrydą", "usługa", 80, 0, 1),
+                CreateProduct("Parafina na dłonie", "usługa", 40, 0, 1),
+                CreateProduct("Manicure z parafiną", "usługa", 70, 0, 1),
+                CreateProduct("Pedicure z pomalowaniem lakierem", "usługa", 100, 0, 1),
+                CreateProduct("Pedicure z hybrydą", "usługa", 120, 0, 1),
+                CreateProduct("Pedicure medyczny", "usługa", 100, 0, 1),
+                CreateProduct("Założenie klamry tytanowej na wrastający paznokieć 1 szt.", "usługa", 120, 0, 1),
+                CreateProduct("Usunięcie modzeli, odcisku", "usługa", 20, 50, 1),
+                CreateProduct("Przekłucie uszu z kolczykami", "usługa", 50, 0, 1),
+                CreateProduct("Doklejenie kępek 12 szt.", "usługa", 50, 0, 1),
+                CreateProduct("Zabieg kwasem migdałowym, laktobionowym 40% pH 1.5", "usługa", 100, 0, 1),
+                CreateProduct("Zabieg kwasem pirogronowym, azelainowym, salicylowym", "usługa", 100, 0, 1),
+                CreateProduct("Peeling medyczny azelainowy, kwas ferulowy", "usługa", 150, 0, 1),
+                CreateProduct("Usieciowany kwas hialuronowy medyczny 1 ml", "usługa", 700, 0, 1),
+                CreateProduct("Nieusieciowany kwas hialuronowy (okolice oczu)", "usługa", 450, 0, 1),
+                CreateProduct("Mezoterapia igłowa (koktajle witaminowe) twarzy i owłosionej skóry głowy", "usługa", 250, 0, 1),
+                CreateProduct("Mezoterapia dermapenem twarz", "usługa", 250, 0, 1),
+                CreateProduct("Mezoterapia igłowa dermapenem (twarz, szyja, dekolt)", "usługa", 400, 0, 1),
+                CreateProduct("Makijaż okazjonalny", "usługa", 100, 0, 1),
+                CreateProduct("Piercing klasyczny", "usługa", 75, 0, 1),
+                 CreateProduct("Kolczyki do wygojenia - para", "produkt wykorzystywany", 10, 1, 48),
 
 
               };
@@ -173,51 +157,51 @@ namespace FirmTracker_Server
 
                  
                     SqlConnection connection2 = new SqlConnection(connectionString);
-                    connection.Open();
+                    connection2.Open();
 
-                    SqlCommand command2 = new SqlCommand(queryAdmin, connection);
+                    SqlCommand command2 = new SqlCommand(queryAdmin, connection2);
                     command2.CommandTimeout = 200;
                     command2.ExecuteNonQuery();
                     connection2.Close();
 
                     SqlConnection connection3 = new SqlConnection(connectionString);
-                    connection.Open();
+                    connection3.Open();
 
-                    SqlCommand command3 = new SqlCommand(queryUser2, connection);
-                    command2.CommandTimeout = 200;
-                    command2.ExecuteNonQuery();
-                    connection2.Close();
+                    SqlCommand command3 = new SqlCommand(queryUser2, connection3);
+                    command3.CommandTimeout = 200;
+                    command3.ExecuteNonQuery();
+                    connection3.Close();
                     SqlConnection connection4 = new SqlConnection(connectionString);
-                    connection.Open();
+                    connection4.Open();
 
-                    SqlCommand command4 = new SqlCommand(queryUser3, connection);
-                    command2.CommandTimeout = 200;
-                    command2.ExecuteNonQuery();
-                    connection2.Close();
+                    SqlCommand command4 = new SqlCommand(queryUser3, connection4);
+                    command4.CommandTimeout = 200;
+                    command4.ExecuteNonQuery();
+                    connection4.Close();
 
                     SqlConnection connection5 = new SqlConnection(connectionString);
-                    connection.Open();
+                    connection5.Open();
 
-                    SqlCommand command5 = new SqlCommand(queryUser4, connection);
-                    command2.CommandTimeout = 200;
-                    command2.ExecuteNonQuery();
-                    connection2.Close();
+                    SqlCommand command5 = new SqlCommand(queryUser4, connection5);
+                    command5.CommandTimeout = 200;
+                    command5.ExecuteNonQuery();
+                    connection5.Close();
 
                     SqlConnection connection6 = new SqlConnection(connectionString);
                     connection.Open();
 
                     SqlCommand command6 = new SqlCommand(queryUser6, connection);
-                    command2.CommandTimeout = 200;
-                    command2.ExecuteNonQuery();
+                    command6.CommandTimeout = 200;
+                    command6.ExecuteNonQuery();
                     connection2.Close();
 
                     SqlConnection connection7 = new SqlConnection(connectionString);
-                    connection.Open();
+                    connection7.Open();
 
-                    SqlCommand command7 = new SqlCommand(queryUser5, connection);
-                    command2.CommandTimeout = 200;
-                    command2.ExecuteNonQuery();
-                    connection2.Close();
+                    SqlCommand command7 = new SqlCommand(queryUser5, connection7);
+                    command7.CommandTimeout = 200;
+                    command7.ExecuteNonQuery();
+                    connection7.Close();
                 }
 
             }
@@ -235,7 +219,7 @@ namespace FirmTracker_Server
                
                 ExpenseCRUD expenseCrud = new ExpenseCRUD();
                // productCrud.AddProduct(product);
-                productCrud.AddProduct(product2);
+               
                // productCrud.AddProduct(product3);
                 foreach(var clientProduct in products)
                 {
@@ -342,7 +326,7 @@ namespace FirmTracker_Server
     new Transaction
     {
         Date = DateTime.Now.AddDays(-11),
-        Description = "zamówienie telefoniczne",
+        Description = "sprzedaż",
         Discount = 14,
         EmployeeId = 2,
         PaymentType = "Karta kredytowa"
@@ -374,7 +358,7 @@ namespace FirmTracker_Server
     new Transaction
     {
         Date = DateTime.Now.AddDays(-16),
-        Description = "zamówienie",
+        Description = "sprzedaż",
         Discount = 13,
         EmployeeId = 2,
         PaymentType = "Karta kredytowa"
@@ -390,7 +374,7 @@ namespace FirmTracker_Server
     new Transaction
     {
         Date = DateTime.Now.AddDays(-18),
-        Description = "na telefon",
+        Description = "sprzedaż",
         Discount = 21,
         EmployeeId = 4,
         PaymentType = "Gotówka"
@@ -406,7 +390,7 @@ namespace FirmTracker_Server
     new Transaction
     {
         Date = DateTime.Now.AddDays(-21),
-        Description = "zamówienie telefoniczne",
+        Description = "sprzedaż",
         Discount = 12,
         EmployeeId = 2,
         PaymentType = "Karta kredytowa"
@@ -422,7 +406,7 @@ namespace FirmTracker_Server
     new Transaction
     {
         Date = DateTime.Now.AddDays(-23),
-        Description = "zamówienie online",
+        Description = "sprzedaż",
         Discount = 18,
         EmployeeId = 4,
         PaymentType = "Gotówka"
