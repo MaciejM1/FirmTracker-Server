@@ -60,8 +60,8 @@ namespace FirmTracker_Server
                 Console.WriteLine($"The configuration file '{configFilePath}' was not found.");
             }
 
-            TestClass test = new TestClass();
-            test.AddTestProduct();
+            //TestClass test = new TestClass();
+           // test.AddTestProduct();
             QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
             //builder.Services.AddDataProtection().DisableAutomaticKeyGeneration();
             builder.Services.AddCors(options =>
