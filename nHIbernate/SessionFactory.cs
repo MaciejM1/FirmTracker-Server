@@ -58,8 +58,8 @@ namespace FirmTracker_Server.nHibernate
                     .AddFromAssemblyOf<UserMapping>()
                     .AddFromAssemblyOf<WorkdayMapping>();
                     
-                })
-                .ExposeConfiguration(cfg => new SchemaExport(cfg).Create(true, true))  //SchemaUpdate . Execute  dla only update
+                })         //SchemaExport   .Create    //żeby tworzyło za każdym razem
+                .ExposeConfiguration(cfg => new SchemaUpdate(cfg).Execute(true, true))  //SchemaUpdate . Execute  dla only update
                 .BuildSessionFactory();
         }
     }

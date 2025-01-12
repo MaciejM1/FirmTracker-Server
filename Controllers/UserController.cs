@@ -69,6 +69,13 @@ namespace FirmTracker_Server.Controllers
             }
             return Ok(roleClaim);
         }
+        [HttpGet("UsersList")]
+        [Authorize(Roles = Roles.Admin)]
+        public ActionResult<IList<EmployeeDto>> GetAllUsers()
+        {
+            var users = UserService.GetAllUsers();
+            return Ok(users);
+        }
         [HttpGet("emails")]
         [Authorize(Roles = Roles.Admin)]
         public ActionResult<IEnumerable<string>> GetAllUserEmails()

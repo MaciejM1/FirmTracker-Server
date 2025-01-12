@@ -47,13 +47,11 @@ namespace FirmTracker_Server.Controllers
                 var userIdString = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
                 int userId = int.Parse(userIdString);
 
-                // Attempt to start a new workday
                 _workdayCRUD.StartWorkday(userId);
                 return Ok(new { status = "started", userId });
             }
             catch (Exception ex)
             {
-                // If there's an error (like previous workday not stopped), handle it
                 return BadRequest(new { message = "An error occurred while starting the workday.", error = ex.Message });
             }
         }

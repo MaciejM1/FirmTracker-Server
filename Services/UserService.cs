@@ -25,25 +25,37 @@ namespace FirmTracker_Server.Services
         IEnumerable<string> GetAllUserEmails();
         bool UpdatePassword(UpdatePasswordDto dto);
         bool ChangeUserPassword(ChangeUserPasswordDto dto);
+        IList<EmployeeDto> GetAllUsers();
+
     }
 
     public class UserService : IUserService
     {
-        // private readonly GeneralDbContext DbContext;
         private readonly IMapper Mapper;
         private readonly IPasswordHasher<User> PasswordHasher;
         private readonly AuthenticationSettings AuthenticationSettings;
-        // private readonly SimplerAES SimplerAES;
-        //private readonly SessionFactory sessionFactory;
 
         public UserService(IMapper mapper, IPasswordHasher<User> passwordHasher, AuthenticationSettings authenticationSettings)
         {
-            // DbContext = dbContext;
             Mapper = mapper;
             PasswordHasher = passwordHasher;
             AuthenticationSettings = authenticationSettings;
-            ///SimplerAES = new SimplerAES();
-            //SessionFactory = sessionFactory;
+
+        }
+        public IList<EmployeeDto> GetAllUsers()
+        {
+            using (var session = SessionFactory.OpenSession())
+            {
+                var users = session.Query<User>()
+                    .Select(u => new EmployeeDto
+                    {
+                        Id = u.UserId,
+                        email = u.Email
+                    })
+                    .ToList();
+
+                return users;
+            }
         }
         public bool ChangeUserPassword(ChangeUserPasswordDto dto)
         {
@@ -107,7 +119,6 @@ namespace FirmTracker_Server.Services
         {
             using (var session = SessionFactory.OpenSession())
             {
-                // Query the users and return a list of emails
                 var users = session.Query<User>().Select(u => u.Email).ToList();
                 return users;
             }
@@ -125,7 +136,6 @@ namespace FirmTracker_Server.Services
         {
             var user = Mapper.Map<User>(dto);
 
-            // Encrypt or hash the password based on NewEncryption flag
             user.PassHash = dto.NewEncryption ? PasswordHasher.HashPassword(user, dto.Password) : PasswordHasher.HashPassword(user, dto.Password);
             user.Role = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(dto.Role.ToLower());
 
@@ -166,7 +176,6 @@ namespace FirmTracker_Server.Services
                     throw new WrongUserOrPasswordException("Nieprawidłowy login lub hasło.");
                 }
 
-                // Password verification logic
                 if (user.NewEncryption)
                 {
                     try
@@ -193,7 +202,7 @@ namespace FirmTracker_Server.Services
                     }
                 }
 
-                // Generate JWT token
+ 
                 var claims = new List<Claim>() {
                     new(ClaimTypes.NameIdentifier, user.UserId.ToString()),
                     new(ClaimTypes.Role, user.Role)

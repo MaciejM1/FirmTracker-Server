@@ -25,6 +25,8 @@ using FirmTracker_Server.nHibernate.Products;
 using FirmTracker_Server.nHibernate;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Authorization;
+using FirmTracker_Server.Services;
+using System.Security.Claims;
 
 namespace FirmTracker_Server.Controllers
 {
@@ -35,11 +37,11 @@ namespace FirmTracker_Server.Controllers
     {
         private readonly TransactionCRUD _transactionCRUD;
         private readonly ProductCRUD _productCRUD;
-
         public TransactionController()
         {
             _transactionCRUD = new TransactionCRUD();
             _productCRUD = new ProductCRUD();
+           
         }
         
 
@@ -55,7 +57,8 @@ namespace FirmTracker_Server.Controllers
         {
             try
             {
-               
+                var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+                transaction.EmployeeId = int.Parse(userId);
                 foreach (var product in transaction.TransactionProducts)
                 {
                     // Validate if the product quantity is positive
@@ -230,15 +233,15 @@ namespace FirmTracker_Server.Controllers
             try
             {
                 _transactionCRUD.DeleteTransactionProduct(transactionId, productId);
-                return NoContent();  // Successfully removed the product
+                return NoContent();  
             }
             catch (InvalidOperationException ioe)
             {
-                return BadRequest(ioe.Message);  // If the transaction or product isn't found
+                return BadRequest(ioe.Message);  
             }
             catch (Exception ex)
             {
-                return NotFound(ex.Message);  // Other general errors
+                return NotFound(ex.Message);  
             }
         }
     }

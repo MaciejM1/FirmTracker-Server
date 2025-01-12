@@ -55,11 +55,9 @@ namespace FirmTracker_Server.Controllers
         {
             try
             {
-                // Validate date inputs and set default values
                 DateTime start = startDate ?? DateTime.MinValue;
                 DateTime end = endDate ?? DateTime.MaxValue;
 
-                // Validate report type
                 if (string.IsNullOrEmpty(reportType) ||
                     (reportType.ToLower() != "expenses" && reportType.ToLower() != "transactions"))
                 {
@@ -127,8 +125,6 @@ namespace FirmTracker_Server.Controllers
                         page.Margin(2, Unit.Centimetre);
                         page.PageColor(Colors.White);
                         page.DefaultTextStyle(x => x.FontSize(12));
-
-                        // Main header
                         page.Header()
                             .Text("Raport transakcji")
                             .FontSize(22)
@@ -136,7 +132,6 @@ namespace FirmTracker_Server.Controllers
                             .FontColor(Colors.Blue.Medium)
                             .AlignCenter();
 
-                        // Summary section
                         page.Content().PaddingVertical(1, Unit.Centimetre).Column(column =>
                         {
                             column.Spacing(10);
@@ -146,7 +141,6 @@ namespace FirmTracker_Server.Controllers
                                 .Underline()
                                 .FontColor(Colors.Grey.Medium);
 
-                            // Add table header
                             column.Item().Row(row =>
                             {
                                 row.RelativeItem().Text("Data").SemiBold().FontColor(Colors.Blue.Darken1);
@@ -155,8 +149,6 @@ namespace FirmTracker_Server.Controllers
                                 row.RelativeItem().Text("Rabat").SemiBold().FontColor(Colors.Blue.Darken1);
                                 row.RelativeItem().Text("Opis").SemiBold().FontColor(Colors.Blue.Darken1);
                             });
-
-                            // Populate table rows with transaction data
                             foreach (var transaction in transactions)
                             {
                                 column.Item().Row(row =>
@@ -167,8 +159,6 @@ namespace FirmTracker_Server.Controllers
                                     row.RelativeItem().Text(transaction.Discount.ToString("C"));
                                     row.RelativeItem().Text(transaction.Description);
                                 });
-
-                                // Fetch and display transaction products for this transaction
                                 var products = transactionProducts
                                     .Where(tp => tp.TransactionId == transaction.Id)
                                     .ToList();
@@ -189,8 +179,6 @@ namespace FirmTracker_Server.Controllers
                                 }
                             }
                         });
-
-                        // Footer with generation date
                         page.Footer()
                             .AlignCenter()
                             .Text(text =>
@@ -220,16 +208,12 @@ namespace FirmTracker_Server.Controllers
                         page.Margin(2, Unit.Centimetre);
                         page.PageColor(Colors.White);
                         page.DefaultTextStyle(x => x.FontSize(12));
-
-                        // Main header
                         page.Header()
                             .Text("Raport wydatków")
                             .FontSize(22)
                             .SemiBold()
                             .FontColor(Colors.Green.Medium)
                             .AlignCenter();
-
-                        // Summary section
                         page.Content().PaddingVertical(1, Unit.Centimetre).Column(column =>
                         {
                             column.Spacing(10);
@@ -262,8 +246,6 @@ namespace FirmTracker_Server.Controllers
                                 });
                             }
                         });
-
-                        // Footer with generation date
                         page.Footer()
                             .AlignCenter()
                             .Text(text =>
