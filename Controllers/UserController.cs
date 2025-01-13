@@ -47,6 +47,12 @@ namespace FirmTracker_Server.Controllers
             {
                 return BadRequest("Nieprawidłowa wartość pola. /n" + ModelState);
             }
+            if (!IsValidPassword(dto.Password))
+            {
+                return BadRequest("Hasło musi mieć co najmniej 8 znaków i nie może zawierać spacji, ani tabulatorów.");
+            }
+
+
             var id = UserService.AddUser(dto);
             return Created($"/api/user/{id}", "User dodany poprawnie");
         }
@@ -94,7 +100,13 @@ namespace FirmTracker_Server.Controllers
         {
             try
             {
+                if (!IsValidPassword(dto.password))
+                {
+                    return BadRequest("Password must be at least 8 characters long and cannot contain spaces or tabs.");
+                }
+
                 var result = UserService.ChangeUserPassword(dto);
+
                 if (result)
                 {
                     return Ok("Password changed successfully.");
@@ -131,6 +143,14 @@ namespace FirmTracker_Server.Controllers
             {
                 return BadRequest($"An error occurred: {ex.Message}");
             }
+        }
+        private bool IsValidPassword(string password)
+        {
+            if (string.IsNullOrEmpty(password) || password.Length < 8 || password.Contains(" ") || password.Contains("\t"))
+            {
+                return false;
+            }
+            return true;
         }
 
         // New method to get all users
